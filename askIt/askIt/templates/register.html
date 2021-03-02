@@ -1,25 +1,23 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
-    
-        <!-- Bootstrap CSS -->
-        {% load static %}
-        <link rel="stylesheet" href="{% static 'styles.css' %}">
-</head>
-    
-        <title>ask-it</title>
-      </head>
-      <body>
-          gc
-        <div id="test">
-            <p class="abc">
-                lnjbkibkiblb
-            </p>
+{% extends 'boilerPlate.html' %}
+{% block cssStatic %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'login.css' %}">
+{% endblock cssStatic %}
+{% block body %}
+<body class="text-center">
 
+{% csrf_token %}
+<div class="container" style = "background-color:#445c61; border-radius:10px 10px 10px 10px">
+    
+    <div class="row">
+        <div class = "col m-5" > 
+            <input type="text" id="inputEmail" class="form-control" placeholder="Name" required="" autofocus="">
         </div>
-      </body>
+        <div class = "col m-5" style = "background-color:blue"> 
+        </div>
+    </div>
+</div>   
+</body>
 
-</html>
+{% endblock body %}
+

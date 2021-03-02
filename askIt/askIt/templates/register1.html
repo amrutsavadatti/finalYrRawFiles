@@ -1,0 +1,63 @@
+{% extends 'boilerplate.html' %}
+
+{% block boilerBody %}
+
+
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" style="color:#ffffff">Create Account</a>
+  </div>
+</nav>
+
+{% csrf_token %}
+<form class="form-floating">
+<div class="container my-3" style = "background-color:#ffffff; border-radius:10px 10px 10px 10px">
+
+    <div class="row">
+        <div class = "col mt-5" > 
+            
+        </div>
+        <div class = "col-xs-1 center-block mt-5"> 
+            <div class="btn-group " role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-primary">Student</button>
+                <button type="button" class="btn btn-primary">Alumni</button>
+            </div>
+        </div>
+        <div class = "col mt-5" > 
+        </div>
+    </div>
+
+    <div class="row">
+        <div class = "col mt-2" > 
+            <label for="fName">First Name</label>
+            <input type="text" id="fName" class="form-control" placeholder="" required="" autofocus="">
+            
+        </div>
+        <div class = "col mt-2" > 
+            <label for="lName">Last Name</label>
+            <input type="text" id="lName" class="form-control" placeholder="" required="" autofocus="">
+            
+        </div>
+        
+    </div>
+        <div class="row">
+        <div class = "col mt-2" > 
+            <label for="fName">First Name</label>
+            <input type="text" id="fName" class="form-control" placeholder="" required="" autofocus="">
+            
+        </div>
+        <div class = "col mt-2" > 
+            <label for="lName">Last Name</label>
+            <input type="text" id="lName" class="form-control" placeholder="" required="" autofocus="">
+            
+        </div>
+        
+    </div>
+    
+</div>   
+</form>
+
+
+
+{% endblock boilerBody %}
+

@@ -1,9 +1,9 @@
 {% extends 'boilerPlate.html' %}
 {% block cssStatic %}
     {% load static %}
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="{% static 'login.css' %}">
 {% endblock cssStatic %}
-{% block body %}
+{% block boilerBody %}
 <body class="text-center">
 {% csrf_token %}
 
@@ -43,5 +43,5 @@
     </div>
 </body>
 
-{% endblock body %}
+{% endblock boilerBody %}
 
