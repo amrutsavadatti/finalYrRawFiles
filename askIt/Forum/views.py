@@ -1,10 +1,5 @@
 from django.shortcuts import render, HttpResponse
 
-
-# def display(request):
-#     return render(request,"index.html")
-#     # return HttpResponse("login")
-
 def display(request):
     name = "amrut"
     context = {
