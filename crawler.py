@@ -1,6 +1,10 @@
+
 import json
 import requests
 from bs4 import BeautifulSoup
+
+
+#vinutha's code
 
 # Base url
 start_url = 'https://stackoverflow.com/questions?tab=newest&page='
@@ -34,3 +38,4 @@ for page_num in range(1, 10):
         }
         
         print(json.dumps(question, indent=2))
+
