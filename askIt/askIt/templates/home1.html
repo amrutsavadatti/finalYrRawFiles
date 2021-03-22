@@ -98,44 +98,51 @@
 
                         <ul class="nav nav-tabs" >
                         <li class="nav-item">
-                            <a class="nav-link active" href="home" style="color:#007bff">Alumni</a>
+                            <a class="nav-link" href="home" style="color:grey">Alumni</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="home1" style="color:grey">StackOverflow</a>
+                            <a class="nav-link active" href="home1" style="color:#007bff">StackOverflow</a>
                         </li>
                         </ul>
 
                         {% comment %} this is blogPost  {% endcomment %}
-                        
-                            
-                                <div class="border border-info rounded m-1 p-2 ">
-                                {% for i in abc %}
-                                <a href="#">{{1}}jh</a>
-                                <p style="font-size:12px">12/3/2021</p>
-                                <p>
-                                    {{2}},sc, ncj scj sdcshdc
-                                </p>
-                                    <div class="row mx-1">
-                                        <div class="col-md-auto" style="background-color:white">
-                                        <img src="{% static 'upvote.png' %}">
-                                        <p style="font-size:12px;padding-left:35%">0</p>
-                                        </div>
-                                        <div class="col-md-auto" style="background-color:white">
-                                        <img src="{% static 'downvote.png' %}">
-                                        <p style="font-size:12px;padding-left:35%">0</p>
-                                        </div>
-                                        <div class="col-md-auto" style="background-color:white">
-                                        <img src="{% static 'comment.png' %}">
-                                        <p style="font-size:12px;padding-left:35%">0</p>
-                                        </div>                                
-                                    </div>
 
-                            
-                                {% endfor %}
-                            </div>                        
-                            
-                        
-                        
+                        {% for i in "0123456789" %}
+                        <div class="border border-info rounded m-1 p-2 ">
+                          <a href="#">Title</a>
+                          <p style="font-size:12px">12/3/2021</p>
+                          <p>
+                            sjdvjdvlsdyvcsldhvy definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.
+                            Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut .
+
+                            Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut .
+
+                            Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut .
+
+                            Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut Amrut .
+
+                            Amrut Amrut Amrut Amrut Amrut Amrut Amrut A
+                          </p>
+                            <div class="row mx-1">
+                                <div class="col-md-auto" style="background-color:white">
+                                <img src="{% static 'upvote.png' %}">
+                                <p style="font-size:12px;padding-left:35%">{{i}}</p>
+                                </div>
+                                <div class="col-md-auto" style="background-color:white">
+                                <img src="{% static 'downvote.png' %}">
+                                <p style="font-size:12px;padding-left:35%">{{i}}</p>
+                                </div>
+                                <div class="col-md-auto" style="background-color:white">
+                                <img src="{% static 'comment.png' %}">
+                                <p style="font-size:12px;padding-left:35%">{{i}}</p>
+                                </div>                                
+                            </div>
+
+                          
+
+                        </div>                        
+                        {% endfor %}
+
                     
                     {% comment %} end main {% endcomment %}
                 </div> 
