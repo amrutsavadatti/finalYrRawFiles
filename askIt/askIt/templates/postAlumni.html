@@ -1,0 +1,66 @@
+{% extends 'home.html' %}
+
+{% block cssStatic %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+{% endblock cssStatic %}
+
+{% block post1 %}
+    <div class="col pt-2 mt-5" >
+
+                    <div class="main shadow pb-2" style="background-color:white">
+
+                        <ul class="nav nav-tabs" >
+                        <li class="nav-item">
+                            <a class="nav-link" href="postAlumni" style="color:#007bff">Alumni</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link active" href="postStack" style="color:grey">StackOverflow</a>
+                        </li>
+                        </ul>
+
+                        {% comment %} this is blogPost  {% endcomment %}
+
+                        {% for i in "0123456789" %}
+                        <div class="border border-info rounded m-1 p-2 ">
+                          <a href="#">Title</a>
+                          <p style="font-size:12px">12/3/2021</p>
+                          <p>
+                            sjdvjdvlsdyvcsldhvy definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.
+                            waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub .
+
+                            waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub .
+
+                            waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub .
+
+                            waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub .
+
+                            waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub A
+                          </p>
+                            <div class="row mx-1">
+                                <div class="col-md-auto" style="background-color:white">
+                                <img src="{% static 'upvote.png' %}">
+                                <p style="font-size:12px;padding-left:35%">{{i}}</p>
+                                </div>
+                                <div class="col-md-auto" style="background-color:white">
+                                <img src="{% static 'downvote.png' %}">
+                                <p style="font-size:12px;padding-left:35%">{{i}}</p>
+                                </div>
+                                <div class="col-md-auto" style="background-color:white">
+                                <img src="{% static 'comment.png' %}">
+                                <p style="font-size:12px;padding-left:35%">{{i}}</p>
+                                </div>                                
+                            </div>
+
+                          
+
+                        </div>                        
+                        {% endfor %}
+
+                    
+                    {% comment %} end main {% endcomment %}
+                </div> 
+                
+            </div>
+
+{% endblock post1 %}
