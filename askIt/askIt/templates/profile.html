@@ -6,6 +6,7 @@
             
         <link rel="stylesheet" href="https://cdn.materialdesignicons.com/3.7.95/css/materialdesignicons.min.css">
         <link rel="stylesheet" href="{% static 'profile.css' %}">
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
 
    {% endblock cssStatic %}
         
@@ -103,29 +104,23 @@
                   <div class="mt-4 py-2 border-top border-bottom">
                     <ul class="nav profile-navbar">
                       <li class="nav-item">
-                        <a class="nav-link" href="#">
-                          <i class="mdi mdi-account-outline"></i>
-                          Info
-                        </a>
+                        <div class="shadow m-2"style="border-radius:20px;background-color:#e3f2fd ">
+                          <img src="{% static 'UpStatus.png' %}" style="width:150px;height:150px">
+                          <p align="center" style="font-size:26px">108</p>
+                        </div>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link active" href="#">
-                          <i class="mdi mdi-newspaper"></i>
-                          Feed
-                        </a>
+                        <div class="shadow m-2"style="border-radius:20px;background-color:#e3f2fd">                      
+                          <img src="{% static 'DownStatus.png' %}" style="width:150px;height:150px">
+                          <p align="center" style="font-size:26px">3</p>
+                        </div>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="#">
-                          <i class="mdi mdi-calendar"></i>
-                          Agenda
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="#">
-                          <i class="mdi mdi-attachment"></i>
-                          Resume
-                        </a>
-                      </li>
+                        <div class="shadow m-2"style="border-radius:20px;background-color:#e3f2fd;width:150px">                      
+                          <img src="{% static 'post.png' %}" style="width:90px;height:90px;margin:30px">
+                          <p align="center" style="font-size:26px">50</p>
+                        </div>
+                      </li>                      
                     </ul>
                   </div>
                   <div class="profile-feed">

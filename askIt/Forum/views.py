@@ -33,5 +33,8 @@ def home1(request):
 def profile(request):
     return render(request,"profile.html")
 
+def profile(request):
+    return render(request,"askAlumni.html")
+
 
 

@@ -9,4 +9,5 @@ urlpatterns = [
     path("postAlumni", views.home, name = "postAlumni"),
     path("postStack", views.home1, name = "postStack"),
     path("profile", views.profile, name = "Profile"),
+    path("askAlumni", views.profile, name = "AskAlumni"),
 ]
