@@ -1,0 +1,81 @@
+{% extends 'boilerplate.html' %}
+{% block cssStatic %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'reg.css' %}">
+{% endblock cssStatic %}
+{% block boilerBody %}
+
+
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="#">Ask-it</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Hi {{dynamicUserName}} <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+       
+      </div>
+<div class="input-group my-2 mr-5">
+
+</div>
+
+</nav>
+
+  
+      <div class="mt-5">
+      <div class="container mt-5">
+          <div class="title">Employment details and skillsets</div>
+          <div class="content">
+            <form action="#">
+              
+                
+            </div>
+              <div class="user-details">
+                <div class="input-box">
+                  <span class="details">Current Company employed in</span>
+                  <input type="text" placeholder="Name of Company " required>
+                </div>
+                <div class="input-box">
+                  <span class="details">Position held in Company</span>
+                  <input type="text" placeholder="e.g Assistant Manager" required>
+                </div>
+                <div class="input-box">
+                  <span class="details">Location of your Workplace</span>
+                  <div class="dropdown" placeholder="Enter name of City">
+                    <span class="dropdown-select" ></span>
+                    <i class="fa fa-corst-down icon"></i>
+                </div>
+                <div class="input-box">
+                  <span class="details">Please list out the names of Previous Companies that you have worked for</span>
+                  <input type="text" placeholder="e.g company1, company2..." required>
+                </div>
+                <div class="input-box">
+                  <span class="details">Please enter your skillsets skillsets</span>
+                  <input type="text" placeholder="e.g Java, SQL..." required>
+                </div>
+                <div class="row">
+                  <div class = "col mt-5" > 
+                      
+                  </div>
+                  <div class = "col-xs-1 center-block mt-5"> 
+                      <div class="btn-group " role="group" aria-label="Basic example">
+                          <a href="register3.html"><button type="button" class="btn btn-primary">NEXT</button></a>
+                      </div>
+                  </div>
+                  <div class = "col mt-5" > 
+                  </div>
+              </div>
+              </div>
+            </form>
+          </div>
+      </div> 
+      </div>
+{% endblock boilerBody %}
+  
+  
+  
+  

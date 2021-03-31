@@ -1,0 +1,89 @@
+{% extends 'boilerplate.html' %}
+{% block cssStatic %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'reg.css' %}">
+{% endblock cssStatic %}
+{% block boilerBody %}
+
+
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="#">Ask-it</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Hi {{dynamicUserName}} <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+       
+      </div>
+<div class="input-group my-2 mr-5">
+
+</div>
+
+</nav>
+
+  
+      <div class="mt-5">
+      <div class="container mt-5">
+          <div class="title">Academic Information</div>
+          <div class="content">
+            <form action="#">
+              
+                
+            </div>
+              <div class="user-details">
+                <div class="input-box">
+                  <span class="details">Year of Graduation</span>
+                  <input type="text" placeholder="yy-yy (e.g 03-04) " required>
+                </div>
+                <div class="input-box">
+                  <span class="details">City</span>
+                  <input type="text" placeholder="Enter your name of City" required>
+                </div>
+                <div class="input-box">
+                  <span class="details">Stream</span>
+                  <div class="dropdown" placeholder="Choose stream">
+                    <span class="dropdown-select" ></span>
+                    <i class="fa fa-corst-down icon"></i>
+                </div>
+                <div class="input-box">
+                  <span class="details">State</span>
+                  <input type="text" placeholder="Enter your State" required>
+                </div>
+                <div class="input-box">
+                  <span class="details">Native residence</span>
+                  <input type="text" placeholder="Enter name of your City" required>
+                </div>
+                <div class="input-box">
+                  <span class="details">Did you pusruse for Masters/MBA after Graduation?</span>
+                  <input type="text" placeholder="Yes/no" required>
+                </div>
+                <div class="input-box">
+                  <span class="details">If yes, then please name the course and University?</span>
+                  <input type="text" placeholder="Cournse name, Univeristy name" required>
+                </div>
+                <div class="row">
+                  <div class = "col mt-5" > 
+                      
+                  </div>
+                  <div class = "col-xs-1 center-block mt-5"> 
+                      <div class="btn-group " role="group" aria-label="Basic example">
+                          <a href="register3"><button type="button" class="btn btn-primary">NEXT</button></a>
+                      </div>
+                  </div>
+                  <div class = "col mt-5" > 
+                  </div>
+              </div>
+              </div>
+            </form>
+          </div>
+      </div> 
+      </div>
+{% endblock boilerBody %}
+  
+  
+  
+  

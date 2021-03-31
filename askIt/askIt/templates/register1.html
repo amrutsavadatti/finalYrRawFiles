@@ -1,63 +1,88 @@
 {% extends 'boilerplate.html' %}
-
+{% block cssStatic %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'reg.css' %}">
+{% endblock cssStatic %}
 {% block boilerBody %}
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="#">Ask-it</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Hi {{dynamicUserName}} <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+      </div>
+<div class="input-group my-2 mr-5">
 
+</div>
 
-<nav class="navbar navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" style="color:#ffffff">Create Account</a>
-  </div>
 </nav>
 
 {% csrf_token %}
-<form class="form-floating">
-<div class="container my-3" style = "background-color:#ffffff; border-radius:10px 10px 10px 10px">
-
-    <div class="row">
-        <div class = "col mt-5" > 
-            
-        </div>
-        <div class = "col-xs-1 center-block mt-5"> 
-            <div class="btn-group " role="group" aria-label="Basic example">
-                <button type="button" class="btn btn-primary">Student</button>
-                <button type="button" class="btn btn-primary">Alumni</button>
+    <div class="container m">
+        <div class="title">Registration</div>
+        <div class="content">
+          <form action="#">
+            <div class="row">
+              <div class = "col mt-5" > 
+                  
+              </div>
+              <div class = "col-xs-1 center-block mt-5"> 
+                  <div class="btn-group " role="group" aria-label="Basic example">
+                      <button type="button" class="btn btn-primary">Student</button>
+                      <button type="button" class="btn btn-primary">Alumni</button>
+                  </div>
+              </div>
+              <div class = "col mt-5" > 
+              </div>
+          </div>
+            <div class="user-details">
+              <div class="input-box">
+                <span class="details">Full Name</span>
+                <input type="text" placeholder="Enter your name" required>
+              </div>
+              <div class="input-box">
+                <span class="details">Username</span>
+                <input type="text" placeholder="Enter your username" required>
+              </div>
+              <div class="input-box">
+                <span class="details">Email</span>
+                <input type="text" placeholder="Enter your email" required>
+              </div>
+              <div class="input-box">
+                <span class="details">Phone Number</span>
+                <input type="text" placeholder="Enter your number" required>
+              </div>
+              <div class="input-box">
+                <span class="details">Password</span>
+                <input type="text" placeholder="Enter your password" required>
+              </div>
+              <div class="input-box">
+                <span class="details">Confirm Password</span>
+                <input type="text" placeholder="Confirm your password" required>
+              </div>
+              <div class="row">
+                <div class = "col mt-5" > 
+                    
+                </div>
+                <div class = "col-xs-1 center-block mt-5"> 
+                    <div class="btn-group " role="group" aria-label="Basic example">
+                        <a href="register2"><button type="button" class="btn btn-primary">NEXT</button></a>
+                    </div>
+                </div>
+                <div class = "col mt-5" > 
+                </div>
             </div>
+            </div>
+          </form>
         </div>
-        <div class = "col mt-5" > 
-        </div>
-    </div>
-
-    <div class="row">
-        <div class = "col mt-2" > 
-            <label for="fName">First Name</label>
-            <input type="text" id="fName" class="form-control" placeholder="" required="" autofocus="">
-            
-        </div>
-        <div class = "col mt-2" > 
-            <label for="lName">Last Name</label>
-            <input type="text" id="lName" class="form-control" placeholder="" required="" autofocus="">
-            
-        </div>
-        
-    </div>
-        <div class="row">
-        <div class = "col mt-2" > 
-            <label for="fName">First Name</label>
-            <input type="text" id="fName" class="form-control" placeholder="" required="" autofocus="">
-            
-        </div>
-        <div class = "col mt-2" > 
-            <label for="lName">Last Name</label>
-            <input type="text" id="lName" class="form-control" placeholder="" required="" autofocus="">
-            
-        </div>
-        
-    </div>
-    
-</div>   
+    </div> 
+  </div>   
 </form>
-
-
 
 {% endblock boilerBody %}
 
