@@ -17,7 +17,10 @@ def takeToHome(request):
         name = request.POST.get("name")
         password = request.POST.get("pass")
         print(name,password)
-    return render(request,"postAlumni.html")    
+    return render(request,"postAlumni.html")
+
+def alumni(request):
+    return render(request,"alumni.html")    
 
 def Register1(request):
     return render(request,"register1.html")

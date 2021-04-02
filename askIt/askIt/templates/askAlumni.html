@@ -23,7 +23,15 @@
                         </li>                          
                         </ul>
 
-                        {% comment %} this is blogPost  {% endcomment %}
+                        <form method="POST" action="">
+							{% csrf_token %}
+							<div class="input-group mt-2 px-2">
+									<input type="text" class="form-control" name="searchAlumniInput" placeholder="Search skills or name" aria-label="Recipient's username" aria-describedby="button-addon2">
+									<div class="input-group-append">
+									<button class="btn btn-outline-success" type="button" id="button-addon2">Search</button>
+								</div>  
+							</div>
+						</form>
 
                         <div class="card-body">
 						<table class="table table-striped" style="width:100%">
@@ -199,6 +207,7 @@
                     {% comment %} end main {% endcomment %}
                 </div> 
                 
-            </div>
+    </div>
+
 
 {% endblock post1 %}

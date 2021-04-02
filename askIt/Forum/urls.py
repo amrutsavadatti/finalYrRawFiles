@@ -12,4 +12,5 @@ urlpatterns = [
     path("postStack", views.home1, name = "postStack"),
     path("profile", views.profile, name = "Profile"),
     path("askAlumni", views.askAlumni, name = "AskAlumni"),
+    path("alumni", views.alumni, name = "Alumni"),
 ]
