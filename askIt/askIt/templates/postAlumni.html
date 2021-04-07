@@ -24,13 +24,13 @@
 
                         {% comment %} this is blogPost  {% endcomment %}
 
-                        {% for i in "0123456789" %}
+                        {% for ppl,qs in comb_lst  %}
                         <div class="border border-info rounded m-1 p-2 ">
-                          <a href="#">Title</a>
+                          <a href="answers">{{qs}}</a>
                           <p style="font-size:12px">12/3/2021</p>
-                                                    <p style="font-size:12px">alumni name</p>
+                                                    <p style="font-size:12px">{{ppl}}</p>
                           <p>
-                            amrut amrut amrut amrut amrut amrut
+                            short answer peek view (Description)
                           </p>
                             <div class="row mx-1">
                                 <div class="col-md-auto" style="background-color:white">

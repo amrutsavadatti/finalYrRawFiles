@@ -1,3 +1,5 @@
+
+
 /*
  * Sidebar
  */
@@ -87,4 +89,10 @@
   -ms-transform: rotate(180deg);
   -o-transform: rotate(180deg);
   transform: rotate(180deg);
+}
+
+.xyz{
+  margin-left: 17px;
+  margin-right: 17px;
+  background-color: black;
 }

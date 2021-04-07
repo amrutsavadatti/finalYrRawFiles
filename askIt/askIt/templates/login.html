@@ -5,13 +5,18 @@
 {% endblock cssStatic %}
 {% block boilerBody %}
 <body class="text-center">
+    {% if alertMessage %}
+        <script>
+            alert('{{alertMessage}}');
+        </script>
+    {% endif %}
     <div class = "container">
         <div class = "row">
             <div class = "col col-4">
             </div>
             <div class = "col" >
                 <div class="jumbotron py-5" style = "background-color:#445c61;">
-                <form class="form-signin" method="POST" action="">
+                <form class="form-signin" method="POST" action="postAlumni">
                     {% csrf_token %}
                     <img class="mb-4" src="{% static 'logo.png' %}" alt="" width="72" height="72">
                     <h1 class="h3 mb-3 font-weight-normal" style = "color:white;">Please sign in</h1>
@@ -27,7 +32,7 @@
                 
                     <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required="" autofocus="">
                     <input type="password" id="inputPassword" class="form-control" name="pass" placeholder="Password" required="">
-                    <button class="btn btn-lg btn-success btn-block" href="postAlumni" type="submit">Sign in</button>
+                    <button class="btn btn-lg btn-success btn-block" type="submit">Sign in</button>
                 <div>
                     <p style = "color:white;">Not a member yet? <a href="register" class="badge badge-danger">Register</a></p>
                 </div>

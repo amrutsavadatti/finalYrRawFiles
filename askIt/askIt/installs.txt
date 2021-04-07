@@ -1,0 +1,4 @@
+requests
+beautifulsoup
+better_profanity
+pyrebase

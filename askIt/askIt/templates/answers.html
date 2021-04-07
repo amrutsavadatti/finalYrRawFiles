@@ -1,0 +1,90 @@
+{% extends 'home.html' %}
+
+{% block cssStatic %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+{% endblock cssStatic %}
+
+{% block post1 %}
+    <div class="col pt-2 mt-5" >
+
+                    <div class="main shadow pb-2" style="background-color:white">
+
+                        <ul class="nav nav-tabs" >
+                        <li class="nav-item">
+                            <a class="nav-link" href="postAlumni" style="color:#007bff">Alumni</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link " href="postStack" style="color:#007bff">StackOverflow</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="askAlumni" style="color:#007bff">Ask Alumni</a>
+                        </li>                          
+                        </ul>
+
+
+                        {% comment %} this is blogPost  {% endcomment %}
+
+                        <div class="border  rounded m-1 p-2 " style="background-color:rgb(61, 104, 121)">
+                            <h3 style="color:white">The Question here</h3>
+                            <p style="font-size:12px;color:white">12/3/2021</p>
+                            <p style="font-size:12px;color:white">by person</p>
+                        </div>      
+
+                        {% for i in "123" %}
+                        <div class="border border-info rounded m-1 p-2 ">
+
+                            <p>
+                                wba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub . waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub . waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub . waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub . waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub 
+                            </p>
+                            <p style="font-size:12px">12/3/2021</p>
+                            <p style="font-size:12px">by person</p>
+                            <div class="row mx-1">
+                                <div class="col-md-auto" style="background-color:white">
+                                <img src="{% static 'upvote.png' %}">
+                                <p style="font-size:12px;padding-left:35%">{{i}}</p>
+                                </div>
+                                <div class="col-md-auto" style="background-color:white">
+                                <img src="{% static 'downvote.png' %}">
+                                <p style="font-size:12px;padding-left:35%">{{i}}</p>
+                                </div>
+                                 <div class="col-md-auto" style="background-color:white">
+                                    <a data-toggle="collapse" href="#collapseExample{{i}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                        <img src="{% static 'comment.png' %}">
+                                        <p style="font-size:12px;padding-left:35%">{{i}}</p>  
+                                    </a>                                
+                                </div>                                
+                            </div>
+                            <div class="collapse" id="collapseExample{{i}}">
+                                <div class="card card-body">
+                                    {% for i in '12345' %}
+                                    <div class="border rounded m-1 p-2 ">
+                                        <p>
+                                            comment comment comment
+                                        </p>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="border rounded m-1 p-2 ">
+                                        <div class="border rounded m-1 p-2 " style="background-color:#c9d6d6">
+                                            <p>
+                                                comment comment comment
+                                            </p>
+                                        </div> 
+                                        <p>
+                                            comment comment comment
+                                        </p>
+                                    </div> 
+                                    <h3>Write Your Comment</h3>
+                                    <textarea class="form-control" aria-label="With textarea"></textarea>
+                                </div>                              
+                            </div>
+                        </div>                        
+                        {% endfor %}
+
+                    
+                    {% comment %} end main {% endcomment %}
+                </div> 
+                
+            </div>
+
+{% endblock post1 %}

@@ -1,193 +1,232 @@
-{% extends 'base.html' %}
+{% extends 'boilerPlate.html' %}
 {% block cssStatic %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="stylesheet" href="{% static 'alumniCSS.css' %}">
 {% endblock cssStatic %}
 
-{% block body %}
+{% block boilerBody %}
 
 
+<nav class="navbar navbar-dark bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="postAlumni">ask-it</a>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Hi {{dynamicUserName}} <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item ">
+              <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
+            </li>
+          </ul>
+          <a class="nav-link" style="color:white" href="#">Log Out</a>
+        </div>
 <form method="POST" action="">
 {% csrf_token %}
-    <div class="input-group mt-2 px-2">
-            <input type="text" class="form-control" name="searchAlumniInput" placeholder="Search skills or name" aria-label="Recipient's username" aria-describedby="button-addon2">
-            <div class="input-group-append">
-            <button class="btn btn-outline-success" type="button" id="button-addon2">Search</button>
-        </div>  
-    </div>
-</form>
+<div class="input-group my-2 mr-5">
+      <input type="text" class="form-control" name="searchInput" placeholder="put query or errorcode" aria-label="Recipient's username" aria-describedby="button-addon2">
+      <div class="input-group-append">
+      <button class="btn btn-outline-success" type="button" id="button-addon2">Search</button>
+      <p>{{abc}}</p>
+  </div>  
 
-<div class="card-body">
-    <table class="table table-striped" style="width:100%">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Action</th>
-            <th>Email</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Garrett Winters</td>
-            <td>
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                Message
-                </button>
 
-                <!-- Modal -->
-                <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalCenterTitle">Ask</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <textarea class="form-control" aria-label="With textarea" placeholder="Put Your Questions here"></textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">Send</button>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </td>
-            <td>garrett@winters.com</td>
-            <td><span class="badge bg-success">Active</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Ashton Cox</td>
-            <td>
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                Message
-                </button>
-
-                <!-- Modal -->
-                <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalCenterTitle">Ask</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <textarea class="form-control" aria-label="With textarea" placeholder="Put Your Questions here"></textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">Send</button>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </td>
-            <td>ashton@cox.com</td>
-            <td><span class="badge bg-success">Active</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Sonya Frost</td>
-            <td>Child World</td>
-            <td>sonya@frost.com</td>
-            <td><span class="badge bg-danger">Deleted</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Jena Gaines</td>
-            <td>Helping Hand</td>
-            <td>jena@gaines.com</td>
-            <td><span class="badge bg-warning">Inactive</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar2.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Charde Marshall</td>
-            <td>Price Savers</td>
-            <td>charde@marshall.com</td>
-            <td><span class="badge bg-success">Active</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar2.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Haley Kennedy</td>
-            <td>Helping Hand</td>
-            <td>haley@kennedy.com</td>
-            <td><span class="badge bg-danger">Deleted</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar2.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Tatyana Fitzpatrick</td>
-            <td>Good Guys</td>
-            <td>tatyana@fitzpatrick.com</td>
-            <td><span class="badge bg-success">Active</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar3.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Michael Silva</td>
-            <td>Red Robin Stores</td>
-            <td>michael@silva.com</td>
-            <td><span class="badge bg-success">Active</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar3.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Angelica Ramos</td>
-            <td>The Wiz</td>
-            <td>angelica@ramos.com</td>
-            <td><span class="badge bg-success">Active</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar4.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Jennifer Chang</td>
-            <td>Helping Hand</td>
-            <td>jennifer@chang.com</td>
-            <td><span class="badge bg-warning">Inactive</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar4.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Brenden Wagner</td>
-            <td>The Wiz</td>
-            <td>brenden@wagner.com</td>
-            <td><span class="badge bg-warning">Inactive</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar4.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Fiona Green</td>
-            <td>The Sample</td>
-            <td>fiona@green.com</td>
-            <td><span class="badge bg-warning">Inactive</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar5.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Prescott Bartlett</td>
-            <td>The Sample</td>
-            <td>prescott@bartlett.com</td>
-            <td><span class="badge bg-success">Active</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar5.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Gavin Cortez</td>
-            <td>Red Robin Stores</td>
-            <td>gavin@cortez.com</td>
-            <td><span class="badge bg-success">Active</span></td>
-        </tr>
-        <tr>
-            <td><img src="https://bootdey.com/img/Content/avatar/avatar5.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-            <td>Howard Hatfield</td>
-            <td>Price Savers</td>
-            <td>howard@hatfield.com</td>
-            <td><span class="badge bg-warning">Inactive</span></td>
-        </tr>
-    </tbody>
-    </table>
 </div>
+</form>
+    {% comment %} <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> {% endcomment %}
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a class="nav-link" href="#">Log out</a>
+      </li>
+    </ul>
+  </nav>
 
 
-{% endblock body %}
+<div class="container-fluid">
+    <div class="row" >
+        <div class="col pt-2 ">
+            <div class="main" style="background-color: white;">
+                <div class="input-group mb-0 px-3 py-3 sticky-top" style="background-color: rgb(61, 104, 121); border-radius: 5px;">
+                    <input type="text" class="form-control" placeholder="Alumni's username or Skill" aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <button class="btn btn-success" type="button" id="button-addon2">Search</button>
+                </div>
+
+                  <div class="card-body pt-0">
+                    <table class="table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Action</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Garrett Winters</td>
+                                <td>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                                    Message
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalCenterTitle">Ask</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <textarea class="form-control" aria-label="With textarea" placeholder="Put Your Questions here"></textarea>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary">Send</button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </td>
+                                <td>garrett@winters.com</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Ashton Cox</td>
+                                <td>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                                    Message
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalCenterTitle">Ask</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <textarea class="form-control" aria-label="With textarea" placeholder="Put Your Questions here"></textarea>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary">Send</button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </td>
+                                <td>ashton@cox.com</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Sonya Frost</td>
+                                <td>Child World</td>
+                                <td>sonya@frost.com</td>
+                                <td><span class="badge bg-danger">Deleted</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Jena Gaines</td>
+                                <td>Helping Hand</td>
+                                <td>jena@gaines.com</td>
+                                <td><span class="badge bg-warning">Inactive</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar2.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Charde Marshall</td>
+                                <td>Price Savers</td>
+                                <td>charde@marshall.com</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar2.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Haley Kennedy</td>
+                                <td>Helping Hand</td>
+                                <td>haley@kennedy.com</td>
+                                <td><span class="badge bg-danger">Deleted</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar2.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Tatyana Fitzpatrick</td>
+                                <td>Good Guys</td>
+                                <td>tatyana@fitzpatrick.com</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar3.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Michael Silva</td>
+                                <td>Red Robin Stores</td>
+                                <td>michael@silva.com</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar3.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Angelica Ramos</td>
+                                <td>The Wiz</td>
+                                <td>angelica@ramos.com</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar4.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Jennifer Chang</td>
+                                <td>Helping Hand</td>
+                                <td>jennifer@chang.com</td>
+                                <td><span class="badge bg-warning">Inactive</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar4.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Brenden Wagner</td>
+                                <td>The Wiz</td>
+                                <td>brenden@wagner.com</td>
+                                <td><span class="badge bg-warning">Inactive</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar4.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Fiona Green</td>
+                                <td>The Sample</td>
+                                <td>fiona@green.com</td>
+                                <td><span class="badge bg-warning">Inactive</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar5.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Prescott Bartlett</td>
+                                <td>The Sample</td>
+                                <td>prescott@bartlett.com</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar5.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Gavin Cortez</td>
+                                <td>Red Robin Stores</td>
+                                <td>gavin@cortez.com</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar5.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td>Howard Hatfield</td>
+                                <td>Price Savers</td>
+                                <td>howard@hatfield.com</td>
+                                <td><span class="badge bg-warning">Inactive</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+  
+
+
+{% endblock boilerBody %}
