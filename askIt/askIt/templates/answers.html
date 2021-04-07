@@ -3,6 +3,15 @@
 {% block cssStatic %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles.css' %}">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  	<script>
+		$(document).ready(function(){
+		$("#a").click(function(){
+                $('#replyModal').modal('show')
+			});
+		});
+	</script>
 {% endblock cssStatic %}
 
 {% block post1 %}
@@ -62,6 +71,49 @@
                                         <p>
                                             comment comment comment
                                         </p>
+                                        <div class="row mx-1">
+                                            <div class="col-md-auto" style="background-color:white">
+                                            <img src="{% static 'upvote.png' %}">
+                                            <p style="font-size:12px;padding-left:35%">{{i}}</p>
+                                            </div>
+                                            <div class="col-md-auto" style="background-color:white">
+                                            <img src="{% static 'downvote.png' %}">
+                                            <p style="font-size:12px;padding-left:35%">{{i}}</p>
+                                            </div>
+                                            <div class="col-md-auto" style="background-color:white">
+                                                <a data-toggle="modal" id="a" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" class="feather feather-reply-fill iconClass" viewBox="0 0 16 16">
+                                                    <path d="M5.921 11.9 1.353 8.62a.719.719 0 0 1 0-1.238L5.921 4.1A.716.716 0 0 1 7 4.719V6c1.5 0 6 0 7 8-2.5-4.5-7-4-7-4v1.281c0 .56-.606.898-1.079.62z"/>
+                                                    </svg>
+                                                    <p style="font-size:12px;padding-left:35%">{{i}}</p>  
+                                                </a>                                
+                                            </div> 
+
+                                        {% comment %} modal body {% endcomment %}
+                                            <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalCenterTitle">Ask</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                
+                                                <div class="modal-body">
+                                                    <textarea id="myText" class="form-control" aria-label="With textarea" placeholder="Put Your Questions here"></textarea>
+                                                </div>
+
+                                                <div class="modal-footer">
+
+                                                    <button id="sendToProfanityCheck" type="button" class="btn btn-primary">Post</button>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </div>    
+
+
+                                        </div>
                                     </div>
                                     {% endfor %}
                                     <div class="border rounded m-1 p-2 ">
