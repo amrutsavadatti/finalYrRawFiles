@@ -2,3 +2,7 @@ requests
 beautifulsoup
 better_profanity
 pyrebase
+ocrspace
+tensorflow
+cv2
+elasticsearch_dsl

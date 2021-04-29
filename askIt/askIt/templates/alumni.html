@@ -57,15 +57,17 @@
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
-                                <th>Action</th>
                                 <th>Email</th>
+                                <th>Action</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
+                        {% for i,j,k in info %}
                             <tr>
-                                <td><img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-                                <td>Garrett Winters</td>
+                                <td><img src="https://bootdey.com/img/Content/avatar/avatar{{j}}.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                <td><a href="profile"> {{i}} </a></td>
+                                <td>{{k}}</td>
                                 <td>
                                     <!-- Button trigger modal -->
                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -92,10 +94,11 @@
                                     </div>
                                     </div>
                                 </td>
-                                <td>garrett@winters.com</td>
+                                
                                 <td><span class="badge bg-success">Active</span></td>
                             </tr>
-                            <tr>
+                        {% endfor %}
+                            {% comment %} <tr>
                                 <td><img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
                                 <td>Ashton Cox</td>
                                 <td>
@@ -217,7 +220,7 @@
                                 <td>Price Savers</td>
                                 <td>howard@hatfield.com</td>
                                 <td><span class="badge bg-warning">Inactive</span></td>
-                            </tr>
+                            </tr> {% endcomment %}
                         </tbody>
                     </table>
                 </div>
@@ -226,7 +229,7 @@
 
     </div>
 </div>
-  
+
 
 
 {% endblock boilerBody %}

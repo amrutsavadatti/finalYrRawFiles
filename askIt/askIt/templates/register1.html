@@ -4,39 +4,29 @@
     <link rel="stylesheet" href="{% static 'reg.css' %}">
 {% endblock cssStatic %}
 {% block boilerBody %}
+
+
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
   <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="#">Ask-it</a>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Hi {{dynamicUserName}} <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
-          </li>
-        </ul>
-      </div>
-<div class="input-group my-2 mr-5">
-
-</div>
-
 </nav>
 
-
-    <div class="container m">
-        <div class="title">Registration</div>
-        <div class="content">
-          <form action="/register2" method="POST" >
-          {% csrf_token %}
-            <div class="row">
+<div class="container">
+  <div class="title">Registration</div>
+  <form action="register2" method="POST">{% csrf_token %}
+  <div class="row">
               <div class = "col mt-5" > 
                   
               </div>
-              <div class = "col-xs-1 center-block mt-5"> 
-                  <div class="btn-group " role="group" aria-label="Basic example">
-                      <button type="radio" id="s_id" name="s_btn" value="student" class="btn btn-primary">Student</button>
-                      <button type="radio" id="a_id" name="a_btn" value="alumni" class="btn btn-primary">Alumni</button>
+              <div class = "col-xs-1 center-block mt-5">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
+                    <label class="custom-control-label" for="customRadioInline1">Alumni</label>
                   </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">
+                    <label class="custom-control-label" for="customRadioInline2">Student</label>
+                  </div>
+
               </div>
               <div class = "col mt-5" > 
               </div>
@@ -60,12 +50,9 @@
               </div>
               <div class="input-box">
                 <span class="details">Password</span>
-                <input type="text" name="pass" placeholder="Enter your password" required>
+                <input type="password" name="pass" placeholder="Enter your password" required>
               </div>
-              <div class="input-box">
-                <span class="details">Confirm Password</span>
-                <input type="text" name="userType" placeholder="Confirm your password" required>
-              </div>
+
               <div class="row">
                 <div class = "col mt-5" > 
                     
@@ -79,10 +66,11 @@
                 </div>
             </div>
             </div>
-          </form>
-        </div>
-    </div> 
-  </div>   
-
+      </form>
+            
+</div>
 {% endblock boilerBody %}
-
+  
+  
+  
+  

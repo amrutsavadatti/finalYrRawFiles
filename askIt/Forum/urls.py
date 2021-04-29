@@ -16,7 +16,8 @@ urlpatterns = [
     path("alumni", views.alumni, name = "Alumni"),
     path("chat", views.chatBox, name = "chat"),
     path("answers", views.ans, name = "ans"),
-    path("abc", views.index, name = "abc"),
+    path("abc", views.abc, name = "abc"),
+    path("pop", views.populateDb, name = "pop"),
     path("logOut", views.LogOut, name = "LogOut"),
     path("search/", PublisherDocumentView.as_view({'get' : 'list'})),
 ]

@@ -13,6 +13,7 @@ class UserCreds(models.Model):
     email = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=100)
 
+
 # class UserAccount(models.Model):
 
 #     email = models.CharField(max_length=100)
@@ -37,9 +38,11 @@ class ElasticDemo(models.Model):
 
 class AppUser(models.Model):
     fullName = models.CharField(max_length=100)
-    userName = models.CharField(max_length=100)
+    userName = models.CharField(max_length=100,unique=True)
     phoneNumber = models.CharField(max_length=100)
     userType = models.CharField(max_length=100)
     keyLink = models.OneToOneField(UserCreds,on_delete = models.CASCADE)
+
+
 
 

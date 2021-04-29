@@ -7,6 +7,10 @@ import hashlib
 import pyrebase
 import random
 
+import csv
+from scrap.populate import *
+from django.contrib.staticfiles import finders
+
 import requests,json
 from django_elasticsearch_dsl_drf.filter_backends import (
     FilteringFilterBackend,
@@ -153,7 +157,42 @@ def takeToHome(request):
 
 
 def alumni(request):
-    return render(request,"alumni.html")    
+    try:
+        request.session['uid']
+        
+    except:
+        return HttpResponse("U are logged out")
+    
+
+    try:
+        getData = AppUser.objects.all()
+        getEData = UserCreds.objects.all()
+    except:
+        return HttpResponse("Couldnt fetch Data")
+
+    alumniName = []
+    alumniEmail = []
+    img=[]
+
+    for ppl in getData:
+        alumniName.append(ppl.fullName)
+    for ppl in getEData:
+        alumniEmail.append(ppl.email)
+    # request.COOKIES
+    for i in range(len(alumniName)):
+        img.append(random.randint(1,3))
+
+
+    # context = {
+    #     "name" : alumniName,
+    #     "email":alumniEmail,
+    #     "img":alumniName
+
+    # }
+
+    info = zip(alumniName,img,alumniEmail)
+    return render(request,"alumni.html",{'info':info})
+    # return render(request,"alumni.html")    
 
 def Register1(request):
     return render(request,"register1.html")
@@ -227,6 +266,37 @@ def LogOut(request):
 
 
 ############################################
+def populateDb(request):
+    try:
+        # csv_path = finders.find('C:/Users/Amrut/Desktop/finalYrRawFiles/askIt/scrap/alumniData.csv')
+        with open('C:/Users/Amrut/Desktop/finalYrRawFiles/askIt/scrap/alumniData.csv', newline='') as f:
+            reader = csv.reader(f)
+            data = list(reader)
+
+
+        for j in range(1,len(data)):
+            email = data[j][0]
+            passW = encrypt(data[j][1])
+            fullName = data[j][2]
+            userName = data[j][3]
+            phone = data[j][4]
+            userT = data[j][5]
+
+            putData1 = UserCreds(email=email,password=passW)
+            putData1.save()     
+
+
+            putData = AppUser(fullName=fullName,userName=userName,phoneNumber=phone,userType=userT, keyLink=putData1)
+            putData.save()
+
+        return HttpResponse("status:200")
+    except:
+        return HttpResponse("Error")
+
+##############################################
+
 def abc(request):
+    
+
     return render(request,"abc.html")
 ##############################################
