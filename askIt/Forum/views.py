@@ -70,8 +70,34 @@ class AjaxHandlerView(View):
                     return JsonResponse({"Cuss":allGood},status=200)
                 except:
                     return JsonResponse({"Cuss":"couldnt upload"},status=200)
+        try:
+            request.session['uid']
+            
+        except:
+            return HttpResponse("U are logged out")
+        
 
-        return render(request,"askAlumni.html")
+        try:
+            getData = AppUser.objects.all()
+            getEData = UserCreds.objects.all()
+        except:
+            return HttpResponse("Couldnt fetch Data")
+
+        alumniName = []
+        alumniEmail = []
+        img=[]
+
+        for ppl in getData:
+            alumniName.append(ppl.fullName)
+        for ppl in getEData:
+            alumniEmail.append(ppl.email)
+
+        for i in range(len(alumniName)):
+            img.append(random.randint(1,3))
+
+        info = zip(alumniName,img,alumniEmail)
+        
+        return render(request,"askAlumni.html",{'info':info})
 
 # ElasticSearch tutorial 
 def generate_random_data():
@@ -183,16 +209,9 @@ def alumni(request):
         img.append(random.randint(1,3))
 
 
-    # context = {
-    #     "name" : alumniName,
-    #     "email":alumniEmail,
-    #     "img":alumniName
-
-    # }
-
     info = zip(alumniName,img,alumniEmail)
     return render(request,"alumni.html",{'info':info})
-    # return render(request,"alumni.html")    
+  
 
 def Register1(request):
     return render(request,"register1.html")
@@ -233,15 +252,25 @@ def home(request):
 
 def encrypt(var):
     crypt=hashlib.sha256()
-    # var = "abcdefg"
     crypt.update(bytes(var,'utf-8'))
     return(crypt.hexdigest())
 
 
 def home1(request):
+    try:
+        request.session['uid']
+    
+    except:
+        return HttpResponse("U are logged out")
+
     return render(request,"postStack.html")
 
 def profile(request):
+    try:
+        request.session['uid']
+    
+    except:
+        return HttpResponse("U are logged out")
     return render(request,"profile.html")
 
 def askAlumni(request):
