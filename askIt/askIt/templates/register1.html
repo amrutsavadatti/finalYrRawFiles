@@ -22,19 +22,20 @@
 
 </nav>
 
-{% csrf_token %}
+
     <div class="container m">
         <div class="title">Registration</div>
         <div class="content">
-          <form action="#">
+          <form action="/register2" method="POST" >
+          {% csrf_token %}
             <div class="row">
               <div class = "col mt-5" > 
                   
               </div>
               <div class = "col-xs-1 center-block mt-5"> 
                   <div class="btn-group " role="group" aria-label="Basic example">
-                      <button type="button" class="btn btn-primary">Student</button>
-                      <button type="button" class="btn btn-primary">Alumni</button>
+                      <button type="radio" id="s_id" name="s_btn" value="student" class="btn btn-primary">Student</button>
+                      <button type="radio" id="a_id" name="a_btn" value="alumni" class="btn btn-primary">Alumni</button>
                   </div>
               </div>
               <div class = "col mt-5" > 
@@ -43,27 +44,27 @@
             <div class="user-details">
               <div class="input-box">
                 <span class="details">Full Name</span>
-                <input type="text" placeholder="Enter your name" required>
+                <input type="text" name="fullName" placeholder="Enter your name" required>
               </div>
               <div class="input-box">
                 <span class="details">Username</span>
-                <input type="text" placeholder="Enter your username" required>
+                <input type="text" name="userName" placeholder="Enter your username" required>
               </div>
               <div class="input-box">
                 <span class="details">Email</span>
-                <input type="text" placeholder="Enter your email" required>
+                <input type="text" name="email" placeholder="Enter your email" required>
               </div>
               <div class="input-box">
                 <span class="details">Phone Number</span>
-                <input type="text" placeholder="Enter your number" required>
+                <input type="text" name="phoneNumber" placeholder="Enter your number" required>
               </div>
               <div class="input-box">
                 <span class="details">Password</span>
-                <input type="text" placeholder="Enter your password" required>
+                <input type="text" name="pass" placeholder="Enter your password" required>
               </div>
               <div class="input-box">
                 <span class="details">Confirm Password</span>
-                <input type="text" placeholder="Confirm your password" required>
+                <input type="text" name="userType" placeholder="Confirm your password" required>
               </div>
               <div class="row">
                 <div class = "col mt-5" > 
@@ -71,7 +72,7 @@
                 </div>
                 <div class = "col-xs-1 center-block mt-5"> 
                     <div class="btn-group " role="group" aria-label="Basic example">
-                        <a href="register2"><button type="button" class="btn btn-primary">NEXT</button></a>
+                        <button type="submit" class="btn btn-primary">NEXT</button>
                     </div>
                 </div>
                 <div class = "col mt-5" > 
@@ -82,7 +83,6 @@
         </div>
     </div> 
   </div>   
-</form>
 
 {% endblock boilerBody %}
 

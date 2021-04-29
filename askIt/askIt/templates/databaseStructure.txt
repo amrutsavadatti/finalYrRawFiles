@@ -1,0 +1,70 @@
+Table: users
+
+id: (Integer), Primary ID that preferably auto increments (if supported in chosen DB)
+username: (String) username
+email: (String) Email address
+password: (String) Hashed password
+date_created: (Integer or DateTime) Date account was created
+credits: (Integer) User credits (make this an indexed field)
+
+Table: questions
+
+id: (Integer), Primary ID that preferably auto increments (if supported in chosen DB)
+user_id: (Integer) ID of the user who added this question
+title: (String) Title of the question
+date_created: (Integer or DateTime) Date question was created
+date_update: (Integer or DateTime) Date question was modified
+is_anonymous: (Tiny Integer) of 1 or 0. If value equals '1' question is added anonymously, if '0' it's not anonymous. By default 0 is the value if none specified
+
+Table: answers
+
+id: (Integer), Primary ID that preferably auto increments (if supported in chosen DB)
+user_id: (Integer) Who is answering this question?
+question_id: (Integer) The ID of the question this answer belongs to
+answer_text: (Text) The textual answer response
+is_anonymous: (Tiny Integer) of 1 or 0. If value equals '1' question is added anonymously, if '0' it's not anonymous. By default 0 is the value if none specified
+
+
+############################################################
+
+# Create database dbname
+create database dbname;
+
+# Create table users
+create table users (
+id bigint auto_increment not null,
+name varchar(100) not null,
+email varchar(100) not null,
+password varchar(100) not null,
+date_created DateTime,
+credits Int,
+constraint pk_users primary key (id)
+);
+
+# Create table question
+create table questions (
+id bigint auto_increment not null,
+user_id bigint not null,
+title varchar(255) not null,
+date_created DateTime not null,
+date_update DateTime,
+is_anonymous tinyInt,
+constraint pk_questions primary key (id)
+);
+
+alter table questions add constraint fk_questions_user_id foreign key (user_id) references users(id);
+
+# Create table answers
+create table answers (
+id bigint auto_increment not null,
+user_id bigint not null,
+question_id bigint not null,
+answer_text text,
+date_created DateTime not null,
+date_update DateTime,
+is_anonymous tinyInt,
+constraint pk_questions primary key (id)
+);
+
+alter table answers add constraint fk_answers_user_id foreign key (user_id) references users(id);
+alter table answers add constraint fk_answers_question_id foreign key (question_id) references questions(id);

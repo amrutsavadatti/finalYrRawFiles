@@ -7,6 +7,22 @@ import hashlib
 import pyrebase
 import random
 
+import requests,json
+from django_elasticsearch_dsl_drf.filter_backends import (
+    FilteringFilterBackend,
+    CompoundSearchFilterBackend
+)
+from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
+from django_elasticsearch_dsl_drf.filter_backends import (
+    FilteringFilterBackend,
+    OrderingFilterBackend,
+)
+
+from .documents import *
+from .serializers import *
+
+from .models import *
+
 
 ##########################################################
  ##################CONNECT DATABASE#####################
@@ -53,6 +69,47 @@ class AjaxHandlerView(View):
 
         return render(request,"askAlumni.html")
 
+# ElasticSearch tutorial 
+def generate_random_data():
+    url = "https://newsapi.org/v2/everything?q=tesla&from=2021-03-28&sortBy=publishedAt&apiKey=ef39d7a9f9ee4c0ca68745eee26cb99a"
+    r = requests.get(url)
+    payload = json.loads(r.text)
+    count = 1
+    for data in payload.get('articles'):
+        print(count)
+        ElasticDemo.objects.create(
+            tittle = data.get('title'),
+            content = data.get('description')
+        )
+        count+=1
+
+
+def index(request):
+    generate_random_data()
+    return JsonResponse({'status':200})
+
+class PublisherDocumentView(DocumentViewSet):
+    document = NewsDocument
+    serializer_class = NewsDocumentSerializer
+
+    filter_backends = [
+        FilteringFilterBackend,
+        CompoundSearchFilterBackend,
+        OrderingFilterBackend,
+    ]
+
+    search_fields = ('tittle','content')
+    multi_match_search_fields = ('tittle','content')
+    filter_fields = {
+        'title':'title',
+        'content':'content'
+    }
+    ordering_fields = {
+        'id': None,
+    }
+    ordering = ( 'id'  ,)
+
+# ElasticSearch tutorial End
 
 def display(request):
     name = "amrut"
@@ -65,34 +122,35 @@ def login(request):
     return render(request,"login.html")
 
 def takeToHome(request):
+
+    comb_lst=[]
     if request.method == "POST":
-        email = request.POST.get("email")
-        password = request.POST.get("pass")
+        emailCheck = request.POST.get("email")
+        passwordCheck = encrypt(request.POST.get("pass"))
+        
         try:
-            user = auth.sign_in_with_email_and_password(email,password)
+            # user = auth.sign_in_with_email_and_password(email,password)
+            getData = UserCreds.objects.all()
+            
+            for users in getData:
+                if users.email == emailCheck and users.password == passwordCheck:
+                    request.session['uid'] = users.id
+
         except:
             message = " Incorrect email or password"
             return render(request,"login.html",{"alertMessage":message})
+        
+    try:
+        Qs = QuestionsAsked.objects.filter(keyLink = request.session['uid'])
+        for q in Qs:
+            comb_lst.append(q.Question)
 
-    qId=database.child('Questions').shallow().get().val()
-    lst_qts = []
-    for i in qId:
-        lst_qts.append(i)
+        return render(request,"postAlumni.html",{'comb_lst':comb_lst})
+    except:
+        return HttpResponse("U are logged out")
 
-    all_qts = []
-    for i in lst_qts:
-        qts = database.child('Questions').child(i).child('Question_asked').get().val()
-        all_qts.append(qts)
-    
-    personAsked = []
-    for i in lst_qts:
-        ppl = database.child('Questions').child(i).child('first_name').get().val()
-        personAsked.append(ppl)
 
-    
-    comb_lst = zip(personAsked,all_qts)
-    
-    return render(request,"postAlumni.html",{'comb_lst':comb_lst})
+
 
 def alumni(request):
     return render(request,"alumni.html")    
@@ -101,6 +159,21 @@ def Register1(request):
     return render(request,"register1.html")
 
 def Register2(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = encrypt(request.POST.get("pass"))
+        fullName = request.POST.get("fullName")
+        userName = request.POST.get("userName")
+        phoneNumber = request.POST.get("phoneNumber")
+        userType = request.POST.get("userType")
+        
+        putData1 = UserCreds(email=email,password=password)
+        putData1.save()
+        pk = UserCreds.objects.filter(email=email)
+
+        putData = AppUser(fullName=fullName,userName=userName,phoneNumber=phoneNumber,userType=userType, keyLink=putData1)
+        putData.save()
+
     return render(request,"register2.html")
 
 def Register3(request):
@@ -118,11 +191,11 @@ def home(request):
     print(abc)
     return render(request,"postAlumni.html",abc)
 
-def encrypt():
+def encrypt(var):
     crypt=hashlib.sha256()
-    var = "abcdefg"
+    # var = "abcdefg"
     crypt.update(bytes(var,'utf-8'))
-    print(crypt.hexdigest())
+    return(crypt.hexdigest())
 
 
 def home1(request):
@@ -142,6 +215,13 @@ def checkProfanity(comment):
 
 def ans(request):
     return render(request,"answers.html")
+
+def LogOut(request):
+    try:
+        del request.session['uid']
+    except KeyError:
+        pass
+    return render(request,'index.html')
 
 
 
