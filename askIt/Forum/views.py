@@ -204,7 +204,8 @@ def Register2(request):
         fullName = request.POST.get("fullName")
         userName = request.POST.get("userName")
         phoneNumber = request.POST.get("phoneNumber")
-        userType = request.POST.get("userType")
+        # userType = request.POST.get("userType")
+        userType = "alumni"
         
         putData1 = UserCreds(email=email,password=password)
         putData1.save()
