@@ -9,40 +9,43 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 # use this model to ID the user
-class UserCreds(models.Model):
-    email = models.CharField(max_length=100, unique=True)
+
+class UserCred(models.Model):
+    email = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
 
 
-# class UserAccount(models.Model):
-
-#     email = models.CharField(max_length=100)
-#     password = models.CharField(max_length=100)
-
-    # fullName = models.CharField(max_length=100)
-    # userName = models.CharField(max_length=100)
-    # phoneNumber = models.CharField(max_length=100)
-    # userType = models.CharField(max_length=100)
-    # keyLink = models.OneToOneField(UserCreds,on_delete=)
-
-class QuestionsAsked(models.Model):
-    Question = models.CharField(max_length=500)
-    keyLink = models.ManyToManyField(UserCreds)
-
-class ElasticDemo(models.Model):
-    title = models.CharField(max_length=100)
-    content = models.TextField()
-
-
-# For HMi
-
-class AppUser(models.Model):
+class UserInfo(models.Model):
     fullName = models.CharField(max_length=100)
     userName = models.CharField(max_length=100,unique=True)
-    phoneNumber = models.CharField(max_length=100)
+    phoneNo = models.CharField(max_length=100,unique=True,null=True)
     userType = models.CharField(max_length=100)
-    keyLink = models.OneToOneField(UserCreds,on_delete = models.CASCADE)
+    keyLink = models.OneToOneField(UserCred, on_delete=models.CASCADE)
 
+class Questions(models.Model):
+    question = models.TextField()
+    upVotes = models.IntegerField(default=0)
+    downVotes = models.IntegerField(default=0)
+    userWhoAsked = models.ForeignKey(UserCred,on_delete=models.CASCADE)
 
+class Answers(models.Model):
+    answer = models.TextField()
+    upVotes = models.IntegerField(default=0)
+    downVotes = models.IntegerField(default=0)
+    ansTo = models.ForeignKey(Questions,on_delete=models.CASCADE)
 
+class Comments(models.Model):
+    comment =  models.TextField()
+    upVotes = models.IntegerField(default=0)
+    downVotes = models.IntegerField(default=0)
+    commentToAnswer = models.ForeignKey(Answers,on_delete=models.CASCADE) 
 
+class Replies(models.Model):
+    reply = models.TextField()
+    upVotes = models.IntegerField(default=0)
+    downVotes = models.IntegerField(default=0)
+    replyToComment = models.ForeignKey(Comments,on_delete=models.CASCADE) 
+
+class Skills(models.Model):
+    skill = models.CharField(max_length=100)
+    person = models.ManyToManyField(UserCred)

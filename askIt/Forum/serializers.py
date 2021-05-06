@@ -1,15 +1,38 @@
-from .models import ElasticDemo
+from .models import *
 from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
 from .documents import *
 
 
 
-class NewsDocumentSerializer(DocumentSerializer):
+class AnsDocumentSerializer(DocumentSerializer):
     class Meta:
-        model = ElasticDemo
-        document = NewsDocument
+        model = Answers
+        document = AnsDocument
 
-        fields = ('title','content')
+        fields = (
+            'answer',
+            'upvotes',
+            'downVotes',
+            'ansTo'
+            )
+
+        def get_location(self, obj):
+            try:
+                return obj.location.to_dict()
+            except:
+                return{}
+
+class QuestionsDocumentSerializer(DocumentSerializer):
+    class Meta:
+        model = Questions
+        document = QuestionsDocument
+
+        fields = (
+            'queston',
+            'upVotes',
+            'downVotes',
+            'userWhoAsked'
+            )
 
         def get_location(self, obj):
             try:

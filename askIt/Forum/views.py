@@ -24,30 +24,13 @@ from django_elasticsearch_dsl_drf.filter_backends import (
 
 from .documents import *
 from .serializers import *
-
 from .models import *
 
+from .checkDoc import*
+from django.core.files.storage import FileSystemStorage
+import os
 
-##########################################################
- ##################CONNECT DATABASE#####################
-#########################################################
 
-config = {
-    "apiKey": "AIzaSyCx1ikG7YyV64HFSJhqe9IEBjKZPvxQXjg",
-    "authDomain": "trydata-e39ad.firebaseapp.com",
-    "databaseURL": "https://trydata-e39ad-default-rtdb.firebaseio.com",
-    "projectId": "trydata-e39ad",
-    "storageBucket": "trydata-e39ad.appspot.com",
-    "messagingSenderId": "1055915272866",
-    "appId": "1:1055915272866:web:35f0eb012e5df50fb245fb"
-}
-firebase = pyrebase.initialize_app(config)
-auth = firebase.auth()
-database = firebase.database()
-
-##########################################################
- ##############CONNECT DATABASE END ###################
-#########################################################
 
 class AjaxHandlerView(View):
     def get(self,request):
@@ -78,8 +61,8 @@ class AjaxHandlerView(View):
         
 
         try:
-            getData = AppUser.objects.all()
-            getEData = UserCreds.objects.all()
+            getData = UserInfo.objects.all()
+            getEData = UserCred.objects.all()
         except:
             return HttpResponse("Couldnt fetch Data")
 
@@ -118,9 +101,31 @@ def index(request):
     generate_random_data()
     return JsonResponse({'status':200})
 
+# class PublisherDocumentView(DocumentViewSet):
+#     document = AnsDocument
+#     serializer_class = AnsDocumentSerializer
+
+#     filter_backends = [
+#         FilteringFilterBackend,
+#         CompoundSearchFilterBackend,
+#         OrderingFilterBackend,
+#     ]
+
+#     search_fields = ('answer','content')
+#     multi_match_search_fields = ('tittle','content')
+#     filter_fields = {
+#         'title':'title',
+#         'content':'content'
+#     }
+#     ordering_fields = {
+#         'id': None,
+#     }
+#     ordering = ( 'id'  ,)
+
+
 class PublisherDocumentView(DocumentViewSet):
-    document = NewsDocument
-    serializer_class = NewsDocumentSerializer
+    document = AnsDocument
+    serializer_class = AnsDocumentSerializer
 
     filter_backends = [
         FilteringFilterBackend,
@@ -128,16 +133,20 @@ class PublisherDocumentView(DocumentViewSet):
         OrderingFilterBackend,
     ]
 
-    search_fields = ('tittle','content')
-    multi_match_search_fields = ('tittle','content')
+    search_fields = ('answer','ansTo')
+    multi_match_search_fields = ('answer','ansTo')
     filter_fields = {
-        'title':'title',
-        'content':'content'
+        'answer':'answer',
+        'ansTo':'ansTo'
+        
     }
     ordering_fields = {
         'id': None,
     }
-    ordering = ( 'id'  ,)
+    ordering = ( 'id')
+
+
+   
 
 # ElasticSearch tutorial End
 
@@ -156,11 +165,11 @@ def takeToHome(request):
     comb_lst=[]
     if request.method == "POST":
         emailCheck = request.POST.get("email")
-        passwordCheck = encrypt(request.POST.get("pass"))
+        passwordCheck = request.POST.get("pass")
         
         try:
             # user = auth.sign_in_with_email_and_password(email,password)
-            getData = UserCreds.objects.all()
+            getData = UserCred.objects.all()
             
             for users in getData:
                 if users.email == emailCheck and users.password == passwordCheck:
@@ -177,7 +186,7 @@ def takeToHome(request):
 
         return render(request,"postAlumni.html",{'comb_lst':comb_lst})
     except:
-        return HttpResponse("U are logged out")
+        return render(request,"postAlumni.html",{'comb_lst':comb_lst})
 
 
 
@@ -192,7 +201,7 @@ def alumni(request):
 
     try:
         getData = AppUser.objects.all()
-        getEData = UserCreds.objects.all()
+        getEData = UserCred.objects.all()
     except:
         return HttpResponse("Couldnt fetch Data")
 
@@ -226,17 +235,14 @@ def Register2(request):
         # userType = request.POST.get("userType")
         userType = "alumni"
         
-        putData1 = UserCreds(email=email,password=password)
+        putData1 = UserCred(email=email,password=password)
         putData1.save()
-        pk = UserCreds.objects.filter(email=email)
+        pk = UserCred.objects.filter(email=email)
 
         putData = AppUser(fullName=fullName,userName=userName,phoneNumber=phoneNumber,userType=userType, keyLink=putData1)
         putData.save()
 
     return render(request,"register2.html")
-
-def Register3(request):
-    return render(request,"register3.html")
 
 def home(request):
     if request.method == "POST":
@@ -292,41 +298,102 @@ def LogOut(request):
         pass
     return render(request,'index.html')
 
+def runCheck(request):
+    uploaded_file = 0
+    if request.method == "POST":
 
+        base_dir = "C:/Users/Amrut/Desktop/askIt/finalYrRawFiles/askIt/askIt/media"
+        for f in os.listdir(base_dir):
+            os.remove(os.path.join(base_dir, f))
+
+        uploaded_file = request.FILES['document']
+        fs = FileSystemStorage()
+        fs.save(uploaded_file.name,uploaded_file)
+    else:
+        return render(request,"register3.html")
+    if(uploaded_file != 0):
+        base_dir = "C:/Users/Amrut/Desktop/askIt/finalYrRawFiles/askIt/askIt/media"
+        fileList = os.listdir(base_dir)
+        print(fileList)
+        image = os.path.join(base_dir,fileList[0])
+        print(image)
+
+        ans = execute(image)
+
+        if ans == "1":
+            return render(request,"postAlumni.html",{"ans":"You Are All Set To Go !!"})
+        elif ans == "-1":
+            return render(request,"register3.html",{"err":"Make sure image is readable"})
+        else:
+            return render(request,"register3.html",{"err":"Uploaded document does not appear to be SFIT Marksheet"})
+
+
+    # ans = execute()
+    # print(ans)
+    # return HttpResponse("DOne")
 
 
 ############################################
+
+# # TO POPULATE QnA
+
+# def populateDb(request):
+#     # try:
+#     pk = UserCred.objects.filter(email="tarun@gmail.com")
+#     print(pk[0])
+#     # csv_path = finders.find('C:/Users/Amrut/Desktop/finalYrRawFiles/askIt/scrap/alumniData.csv')
+#     with open('C:/Users/Amrut/Desktop/askIt/finalYrRawFiles/askIt/scrap/QnA.csv', newline='') as f:
+#         reader = csv.reader(f)
+#         data = list(reader)
+
+
+#     for j in range(2,len(data)):
+#         print("Question")
+#         qstn = data[j][0]
+#         print(qstn)
+#         putData1 = Questions(question=qstn,userWhoAsked=pk[0] )
+#         putData1.save() 
+#         for i in range(1,3):
+#             print(data[j][i])
+#             putData = Answers(answer=data[j][i],ansTo=putData1)
+#             putData.save()
+
+#     return HttpResponse("status:200")
+#     # except:
+#     #     return HttpResponse("Error")
+
+
+#TO POPULATE USERS
 def populateDb(request):
-    try:
+    # try:
         # csv_path = finders.find('C:/Users/Amrut/Desktop/finalYrRawFiles/askIt/scrap/alumniData.csv')
-        with open('C:/Users/Amrut/Desktop/finalYrRawFiles/askIt/scrap/alumniData.csv', newline='') as f:
-            reader = csv.reader(f)
-            data = list(reader)
+    with open('C:/Users/Amrut/Desktop/askIt/finalYrRawFiles/askIt/scrap/alumniData.csv', newline='') as f:
+        reader = csv.reader(f)
+        data = list(reader)
 
 
-        for j in range(1,len(data)):
-            email = data[j][0]
-            passW = encrypt(data[j][1])
-            fullName = data[j][2]
-            userName = data[j][3]
-            phone = data[j][4]
-            userT = data[j][5]
+    for j in range(1,len(data)):
+        email = data[j][0]
+        passW = encrypt(data[j][1])
+        fullName = data[j][2]
+        userName = data[j][3]
+        phone = data[j][4]
+        userT = data[j][5]
 
-            putData1 = UserCreds(email=email,password=passW)
-            putData1.save()     
+        putData1 = UserCred(email=email,password=passW)
+        putData1.save()     
 
 
-            putData = AppUser(fullName=fullName,userName=userName,phoneNumber=phone,userType=userT, keyLink=putData1)
-            putData.save()
+        putData = UserInfo(fullName=fullName,userName=userName,phoneNumber=phone,userType=userT, keyLink=putData1)
+        putData.save()
 
-        return HttpResponse("status:200")
-    except:
-        return HttpResponse("Error")
+    return HttpResponse("status:200")
+    # except:
+    #     return HttpResponse("Error")
 
 ##############################################
 
 def abc(request):
-    
 
     return render(request,"abc.html")
 ##############################################

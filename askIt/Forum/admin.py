@@ -4,8 +4,10 @@ from .models import *
 
 
 # Register your models here.
-# admin.site.register(UserAccount)
-admin.site.register(QuestionsAsked)
-admin.site.register(ElasticDemo)
-admin.site.register(UserCreds)
-admin.site.register(AppUser)
+admin.site.register(UserCred)
+admin.site.register(UserInfo)
+admin.site.register(Questions)
+admin.site.register(Answers)
+admin.site.register(Comments)
+admin.site.register(Replies)
+admin.site.register(Skills)

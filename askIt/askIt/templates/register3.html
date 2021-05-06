@@ -1,81 +1,49 @@
 {% extends 'boilerplate.html' %}
 {% block cssStatic %}
     {% load static %}
-    <link rel="stylesheet" href="{% static 'reg.css' %}">
+    <link rel="stylesheet" href="{% static 'register.css' %}">
 {% endblock cssStatic %}
 {% block boilerBody %}
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+		$(document).ready(function(){
+      $("#loader").hide()
+		$("#verify").click(function(){
+				$("#loader").show()
+        $("#alert").text("")
+			});
+		});
+	</script>
 
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
   <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="#">Ask-it</a>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Hi {{dynamicUserName}} <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
-          </li>
-        </ul>
-       
-      </div>
-<div class="input-group my-2 mr-5">
-
-</div>
-
 </nav>
 
-  
-      <div>
-      <div class="container mt-5">
-          <div class="title">Employment details and skillsets</div>
-          <div class="content">
-            <form action="#">
-              
-                
-            </div>
-              <div class="user-details">
-                <div class="input-box">
-                  <span class="details">Current Company employed in</span>
-                  <input type="text" placeholder="Name of Company " required>
-                </div>
-                <div class="input-box">
-                  <span class="details">Position held in Company</span>
-                  <input type="text" placeholder="e.g Assistant Manager" required>
-                </div>
-                <div class="input-box">
-                  <span class="details">Location of your Workplace</span>
-                  <div class="dropdown" placeholder="Enter name of City">
-                    <span class="dropdown-select" ></span>
-                    <i class="fa fa-corst-down icon"></i>
-                </div>
-                <div class="input-box">
-                  <span class="details">Please list out the names of Previous Companies that you have worked for</span>
-                  <input type="text" placeholder="e.g company1, company2..." required>
-                </div>
-                <div class="input-box">
-                  <span class="details">Please enter your skillsets skillsets</span>
-                  <input type="text" placeholder="e.g Java, SQL..." required>
-                </div>
-                <div class="row">
-                  <div class = "col mt-5" > 
-                      
-                  </div>
-                  <div class = "col-xs-1 center-block mt-5"> 
-                      <div class="btn-group " role="group" aria-label="Basic example">
-                          <a href="register3.html"><button type="button" class="btn btn-primary">NEXT</button></a>
-                      </div>
-                  </div>
-                  <div class = "col mt-5" > 
-                  </div>
-              </div>
-              </div>
-            </form>
+<div class="container ">
+  <div class="title">Documents</div>
+  <br>
+    <label for="formFileLg" class="form-label">Upload Your Marksheet</label>
+            
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}	
+	      <div class="custom-file">
+          <div class="btn btn-success btn-sm float-left">
+                <input type="file" id="customFile" name="document">
           </div>
-      </div> 
-      </div>
+          
+          <div>
+          <img id="loader" class="m-1 float-center" src="{% static 'loader.gif' %}" width="45px">
+          <br>
+          
+          </div>
+
+				</div> 	
+        <p id="alert" class="float-left" style="color:red">{{err}}</p>
+        <button class="btn btn-warning float-right" type="submit" id="verify">Verify</button>
+	  </form>     
+  </div>
+</div>
 {% endblock boilerBody %}
-  
-  
-  
+
   

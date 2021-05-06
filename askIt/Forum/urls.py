@@ -8,7 +8,7 @@ urlpatterns = [
     path("login", views.login, name = "Login"),
     path("register1", views.Register1, name = "Register1"),
     path("register2", views.Register2, name = "Register2"),
-    path("register3", views.Register3, name = "Register3"),
+    path("register3", views.runCheck, name = "runCheck"),
     path("postAlumni", views.takeToHome, name = "postAlumni"),
     path("postStack", views.home1, name = "postStack"),
     path("profile", views.profile, name = "Profile"),
@@ -21,3 +21,4 @@ urlpatterns = [
     path("logOut", views.LogOut, name = "LogOut"),
     path("search/", PublisherDocumentView.as_view({'get' : 'list'})),
 ]
+# {'get' : 'list'}
