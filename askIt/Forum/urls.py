@@ -3,6 +3,8 @@ from django.urls import path
 from Forum import views
 from .views import *
 
+
+
 urlpatterns = [
     path("", views.display, name = "displayPage"),
     path("login", views.login, name = "Login"),
@@ -15,10 +17,12 @@ urlpatterns = [
     path("askAlumni", AjaxHandlerView.as_view()),
     path("alumni", views.alumni, name = "Alumni"),
     path("chat", views.chatBox, name = "chat"),
-    path("answers", views.ans, name = "ans"),
+    path("answers/<int:id>", views.ans, name = "ans"),
     path("abc", views.abc, name = "abc"),
     path("pop", views.populateDb, name = "pop"),
     path("logOut", views.LogOut, name = "LogOut"),
     path("search/", PublisherDocumentView.as_view({'get' : 'list'})),
+    path("searchC/", ABC.as_view({'get' : 'list'})),
 ]
 # {'get' : 'list'}
+

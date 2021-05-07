@@ -36,7 +36,11 @@ ANSWER_INDEX.settings(
 class AnsDocument(Document):
     id = fields.IntegerField(attr='id')
     ansTo = fields.ObjectField(properties={
-        'question': fields.TextField()
+        'id':fields.IntegerField(),
+        'question': fields.TextField(
+            
+        ),
+
     })
     answer = fields.TextField(
         fields={

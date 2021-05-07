@@ -21,8 +21,10 @@ from django_elasticsearch_dsl_drf.filter_backends import (
     FilteringFilterBackend,
     OrderingFilterBackend,
 )
+from rest_framework.response import Response
 
 from .documents import *
+from .docTest import *
 from .serializers import *
 from .models import *
 
@@ -122,8 +124,11 @@ def index(request):
 #     }
 #     ordering = ( 'id'  ,)
 
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
 
 class PublisherDocumentView(DocumentViewSet):
+    
     document = AnsDocument
     serializer_class = AnsDocumentSerializer
 
@@ -133,18 +138,64 @@ class PublisherDocumentView(DocumentViewSet):
         OrderingFilterBackend,
     ]
 
-    search_fields = ('answer','ansTo')
-    multi_match_search_fields = ('answer','ansTo')
+    search_fields = ('answer','ansTo','ansTo__question')
+    multi_match_search_fields = ('answer','ansTo','ansTo__question')
     filter_fields = {
         'answer':'answer',
-        'ansTo':'ansTo'
+        'ansTo':'ansTo'   
+    }
+    ordering_fields = {
+        'id': None,
+    }
+    ordering = ( 'id')
+    
         
+class PublisherQDocumentView(DocumentViewSet):
+    
+    document = QuestionsDocument
+    serializer_class = QuestionsDocumentSerializer
+
+    filter_backends = [
+        FilteringFilterBackend,
+        CompoundSearchFilterBackend,
+        OrderingFilterBackend,
+    ]
+
+    search_fields = ('question')
+    multi_match_search_fields = ('question')
+    filter_fields = {
+        'question':'question'
+         
     }
     ordering_fields = {
         'id': None,
     }
     ordering = ( 'id')
 
+class ABC(DocumentViewSet):
+    
+    document = CarDocument
+    serializer_class = CarDocumentSerializer
+
+    filter_backends = [
+        FilteringFilterBackend,
+        CompoundSearchFilterBackend,
+        OrderingFilterBackend,
+    ]
+
+    search_fields = ('name','color','manufacturer__country_code','ads__title')
+    multi_match_search_fields = ('name','color','manufacturer__name','ads__title')
+    filter_fields = {
+        'name':'name',
+        'color':'color',
+        'manufacturer':'manufacturer',
+        'ads':'ads'
+         
+    }
+    ordering_fields = {
+        'name': None,
+    }
+    ordering = ( 'name')
 
    
 
@@ -161,6 +212,25 @@ def login(request):
     return render(request,"login.html")
 
 def takeToHome(request):
+    if request.method == "POST" and request.POST.get("searchInput")!=None:
+        base = "http://127.0.0.1:8000/search/?search="
+        # print(requests.get("http://127.0.0.1:8000/search/?search=django").json())
+        sQuery = request.POST.get("searchInput")
+        op = requests.get(base+sQuery).json()
+        print(op)
+        print(op[0]['ansTo']['id'])
+        qList = []
+        idList=[]
+        id = -1
+        for i in range(len(op)):
+            if op[i]['ansTo']['id']!=id:
+                qList.append(op[i]['ansTo']['question'])
+                id=op[i]['ansTo']['id']
+                idList.append(id)
+        print(qList)
+        info = zip(idList,qList)                
+        return render(request,"postAlumni.html",{'info':info})
+        
 
     comb_lst=[]
     if request.method == "POST":
@@ -200,7 +270,7 @@ def alumni(request):
     
 
     try:
-        getData = AppUser.objects.all()
+        getData = UserInfo.objects.all()
         getEData = UserCred.objects.all()
     except:
         return HttpResponse("Couldnt fetch Data")
@@ -213,7 +283,6 @@ def alumni(request):
         alumniName.append(ppl.fullName)
     for ppl in getEData:
         alumniEmail.append(ppl.email)
-    # request.COOKIES
     for i in range(len(alumniName)):
         img.append(random.randint(1,3))
 
@@ -288,8 +357,22 @@ def chatBox(request):
 def checkProfanity(comment):
     return profanity.contains_profanity(comment)
 
-def ans(request):
-    return render(request,"answers.html")
+def ans(request,id):
+    print(id)
+    
+    getQ = Questions.objects.filter(id=id)
+    getAns = Answers.objects.filter(ansTo=getQ[0])
+    ansList=[]
+    for ans in getAns:
+        ansList.append(ans.answer)
+
+    context={
+        'question':getQ[0].question,
+        'ansList' :ansList
+    }
+
+
+    return render(request,"answers.html",{'context':context})
 
 def LogOut(request):
     try:

@@ -9,7 +9,7 @@
 
 
 <nav class="navbar navbar-dark bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="postAlumni">ask-it</a>
+    <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="postAlumni">Ask-it</a>
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
@@ -21,7 +21,7 @@
           </ul>
           <a class="nav-link" style="color:white" href="#">Log Out</a>
         </div>
-<form method="POST" action="">
+<form method="POST" action="/postAlumni">
 {% csrf_token %}
 <div class="input-group my-2 mr-5">
       <input type="text" class="form-control" name="searchInput" placeholder="put query or errorcode" aria-label="Recipient's username" aria-describedby="button-addon2">

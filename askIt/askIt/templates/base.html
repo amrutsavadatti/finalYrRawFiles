@@ -14,12 +14,12 @@
             </ul>
             <a class="nav-link" style="color:white" href="#">Log Out</a>
           </div>
-<form method="POST" action="">
+<form method="POST" action="/postAlumni">
   {% csrf_token %}
   <div class="input-group my-2 mr-5">
         <input type="text" class="form-control" name="searchInput" placeholder="put query or errorcode" aria-label="Recipient's username" aria-describedby="button-addon2">
         <div class="input-group-append">
-        <button class="btn btn-outline-success" type="button" id="button-addon2">Search</button>
+        <button class="btn btn-outline-success" type="submit" id="button-addon2">Search</button>
         <p>{{abc}}</p>
     </div>  
   

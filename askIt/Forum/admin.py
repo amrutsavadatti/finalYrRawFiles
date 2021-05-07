@@ -11,3 +11,8 @@ admin.site.register(Answers)
 admin.site.register(Comments)
 admin.site.register(Replies)
 admin.site.register(Skills)
+
+
+admin.site.register(Car)
+admin.site.register(Manufacturer)
+admin.site.register(Ad)
