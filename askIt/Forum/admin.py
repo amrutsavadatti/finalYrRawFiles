@@ -4,7 +4,7 @@ from .models import *
 
 
 # Register your models here.
-admin.site.register(UserCred)
+
 admin.site.register(UserInfo)
 admin.site.register(Questions)
 admin.site.register(Answers)
@@ -13,6 +13,3 @@ admin.site.register(Replies)
 admin.site.register(Skills)
 
 
-admin.site.register(Car)
-admin.site.register(Manufacturer)
-admin.site.register(Ad)

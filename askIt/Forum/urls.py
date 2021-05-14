@@ -7,10 +7,14 @@ from .views import *
 
 urlpatterns = [
     path("", views.display, name = "displayPage"),
-    path("login", views.login, name = "Login"),
+    # path("login", login_attempt, name = "Login"),
     path("register1", views.Register1, name = "Register1"),
     path("register2", views.Register2, name = "Register2"),
     path("register3", views.runCheck, name = "runCheck"),
+    path('token' , token_send , name="token_send"),
+    path('verify/<auth_token>' , verify , name="verify"),
+    path('accounts/login/' , login_attempt , name="login_attempt"),
+    path('accounts' , Account , name="account"),
     path("postAlumni", views.takeToHome, name = "postAlumni"),
     path("postStack", views.home1, name = "postStack"),
     path("profile", views.profile, name = "Profile"),
@@ -22,7 +26,12 @@ urlpatterns = [
     path("pop", views.populateDb, name = "pop"),
     path("logOut", views.LogOut, name = "LogOut"),
     path("search/", PublisherDocumentView.as_view({'get' : 'list'})),
-    path("searchC/", ABC.as_view({'get' : 'list'})),
+    path("tatti", tattiFun, name = "poop"),
+
 ]
-# {'get' : 'list'}
+
+# urlpatterns = [
+#     path("", views.display, name = "displayPage"),
+# ]
+
 

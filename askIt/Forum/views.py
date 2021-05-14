@@ -1,4 +1,5 @@
 from django.shortcuts import render, HttpResponse
+from django.contrib.auth.models import User
 from .crawler import getPosts
 from better_profanity import profanity
 from django.views.generic import View
@@ -24,7 +25,6 @@ from django_elasticsearch_dsl_drf.filter_backends import (
 from rest_framework.response import Response
 
 from .documents import *
-from .docTest import *
 from .serializers import *
 from .models import *
 
@@ -32,6 +32,32 @@ from .checkDoc import*
 from django.core.files.storage import FileSystemStorage
 import os
 
+
+from django.shortcuts import redirect, render
+from django.contrib.auth.models import User
+from django.contrib import messages
+from .models import *
+import uuid
+from django.conf import settings
+from django.core.mail import send_mail
+from django.contrib.auth import authenticate,login, logout
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.core.mail import send_mail, BadHeaderError
+from django.http import HttpResponse
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.models import User
+from django.template.loader import render_to_string
+from django.db.models.query_utils import Q
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
+
+@login_required
+def tattiFun(request):
+    usr = request.user
+    print(usr)
+    return render(request,'tattiIdea.html')
 
 
 class AjaxHandlerView(View):
@@ -64,7 +90,7 @@ class AjaxHandlerView(View):
 
         try:
             getData = UserInfo.objects.all()
-            getEData = UserCred.objects.all()
+            getEData = User.objects.all()
         except:
             return HttpResponse("Couldnt fetch Data")
 
@@ -103,30 +129,6 @@ def index(request):
     generate_random_data()
     return JsonResponse({'status':200})
 
-# class PublisherDocumentView(DocumentViewSet):
-#     document = AnsDocument
-#     serializer_class = AnsDocumentSerializer
-
-#     filter_backends = [
-#         FilteringFilterBackend,
-#         CompoundSearchFilterBackend,
-#         OrderingFilterBackend,
-#     ]
-
-#     search_fields = ('answer','content')
-#     multi_match_search_fields = ('tittle','content')
-#     filter_fields = {
-#         'title':'title',
-#         'content':'content'
-#     }
-#     ordering_fields = {
-#         'id': None,
-#     }
-#     ordering = ( 'id'  ,)
-
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.response import Response
-
 class PublisherDocumentView(DocumentViewSet):
     
     document = AnsDocument
@@ -150,67 +152,62 @@ class PublisherDocumentView(DocumentViewSet):
     ordering = ( 'id')
     
         
-class PublisherQDocumentView(DocumentViewSet):
-    
-    document = QuestionsDocument
-    serializer_class = QuestionsDocumentSerializer
 
-    filter_backends = [
-        FilteringFilterBackend,
-        CompoundSearchFilterBackend,
-        OrderingFilterBackend,
-    ]
 
-    search_fields = ('question')
-    multi_match_search_fields = ('question')
-    filter_fields = {
-        'question':'question'
-         
-    }
-    ordering_fields = {
-        'id': None,
-    }
-    ordering = ( 'id')
 
-class ABC(DocumentViewSet):
-    
-    document = CarDocument
-    serializer_class = CarDocumentSerializer
 
-    filter_backends = [
-        FilteringFilterBackend,
-        CompoundSearchFilterBackend,
-        OrderingFilterBackend,
-    ]
+def login_attempt(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = encrypt(request.POST.get("pass"))
+        print(username,password)
+        user_obj = User.objects.filter(username = username).first()
+        if user_obj is None:
+            messages.success(request, 'User not found.')
+            return redirect('/accounts/login')
+        
+        
+        profile_obj = UserInfo.objects.filter(user = user_obj ).first()
 
-    search_fields = ('name','color','manufacturer__country_code','ads__title')
-    multi_match_search_fields = ('name','color','manufacturer__name','ads__title')
-    filter_fields = {
-        'name':'name',
-        'color':'color',
-        'manufacturer':'manufacturer',
-        'ads':'ads'
-         
-    }
-    ordering_fields = {
-        'name': None,
-    }
-    ordering = ( 'name')
+        if not profile_obj.is_verified:
+            messages.success(request, 'Profile is not verified check your mail.')
+            return redirect('/accounts/login')
 
-   
+        user = authenticate(username = username , password = password)
+        if user is None:
+            messages.success(request, 'Wrong password.')
+            return redirect('/accounts/login')
+        
+        login(request , user)
+        
+        return redirect('/postAlumni')
 
-# ElasticSearch tutorial End
+    return render(request , 'login.html')
 
-def display(request):
-    name = "amrut"
-    context = {
-        "dynamicUserName":name
-    }
-    return render(request,"index.html",context)
 
-def login(request):
-    return render(request,"login.html")
+@login_required
+def Account(request):
+    if request.method == "POST" and request.POST.get("searchInput")!=None:
+        base = "http://127.0.0.1:8000/search/?search="
+        # print(requests.get("http://127.0.0.1:8000/search/?search=django").json())
+        sQuery = request.POST.get("searchInput")
+        op = requests.get(base+sQuery).json()
+        print(op)
+        print(op[0]['ansTo']['id'])
+        qList = []
+        idList=[]
+        id = -1
+        for i in range(len(op)):
+            if op[i]['ansTo']['id']!=id:
+                qList.append(op[i]['ansTo']['question'])
+                id=op[i]['ansTo']['id']
+                idList.append(id)
+        print(qList)
+        info = zip(idList,qList)                
+        return render(request,"postAlumni.html",{'info':info})
+    return render(request,"postAlumni.html")
 
+@login_required
 def takeToHome(request):
     if request.method == "POST" and request.POST.get("searchInput")!=None:
         base = "http://127.0.0.1:8000/search/?search="
@@ -239,7 +236,7 @@ def takeToHome(request):
         
         try:
             # user = auth.sign_in_with_email_and_password(email,password)
-            getData = UserCred.objects.all()
+            getData = User.objects.all()
             
             for users in getData:
                 if users.email == emailCheck and users.password == passwordCheck:
@@ -271,7 +268,7 @@ def alumni(request):
 
     try:
         getData = UserInfo.objects.all()
-        getEData = UserCred.objects.all()
+        getEData = User.objects.all()
     except:
         return HttpResponse("Couldnt fetch Data")
 
@@ -294,35 +291,83 @@ def alumni(request):
 def Register1(request):
     return render(request,"register1.html")
 
+def send_mail_after_registration(email , token):
+    subject = 'Your accounts need to be verified'
+    message = f'Hi paste the link to verify your account http://127.0.0.1:8000/verify/{token}'
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [email]
+    send_mail(subject, message , email_from ,recipient_list )
+
+def token_send(request):
+    return render(request , 'registerToken.html')
+    
+
 def Register2(request):
     if request.method == "POST":
         email = request.POST.get("email")
         password = encrypt(request.POST.get("pass"))
-        fullName = request.POST.get("fullName")
+        fName = request.POST.get("fName")
+        lName = request.POST.get("lName")
         userName = request.POST.get("userName")
         phoneNumber = request.POST.get("phoneNumber")
-        # userType = request.POST.get("userType")
-        userType = "alumni"
-        
-        putData1 = UserCred(email=email,password=password)
-        putData1.save()
-        pk = UserCred.objects.filter(email=email)
+        userType = request.POST.get("uType")
 
-        putData = AppUser(fullName=fullName,userName=userName,phoneNumber=phoneNumber,userType=userType, keyLink=putData1)
-        putData.save()
+        print(password)
+
+        try:
+            if User.objects.filter(username = userName).first():
+                messages.success(request, 'Username is taken.')
+                return redirect('/register1')
+
+            if User.objects.filter(email = email).first():
+                messages.success(request, 'Email is taken.')
+                return redirect('/register1')
+
+            user_obj = User(username = userName , email = email, first_name = fName, last_name = lName)
+            user_obj.set_password(password)
+            user_obj.save()
+
+            auth_token = str(uuid.uuid4())
+            info_obj = UserInfo.objects.create(user=user_obj,phoneNo=phoneNumber,userType=userType,auth_token=auth_token)
+            info_obj.save()
+
+            send_mail_after_registration(email , auth_token)
+
+            return redirect('/token')
+
+        except Exception as e:
+            print(e)
 
     return render(request,"register2.html")
+
+def verify(request , auth_token):
+    try:
+        profile_obj = UserInfo.objects.filter(auth_token = auth_token).first()
+    
+
+        if profile_obj:
+            if profile_obj.is_verified:
+                messages.success(request, 'Your account is already verified.')
+                return redirect('/register2')
+            profile_obj.is_verified = True
+            profile_obj.save()
+            messages.success(request, 'Your account has been verified.')
+            return redirect('/register2')
+        else:
+            return redirect('/error')
+    except Exception as e:
+        print(e)
+        return redirect('/')
+
+def error_page(request):
+    return  render(request , 'error.html')
+
+
 
 def home(request):
     if request.method == "POST":
         sQuery = request.POST.get("searchInput")
         print(sQuery)
-        #blogs = getPosts(sQuery)
-    
-    blogs = {'1':{'1':'one','2':'two'},'2':{'1':'one1','2':'two1'},'3':{'1':'one2','2':'two2'}}
-    abc={'a':'1','b':'c'}
-        
-    print(abc)
     return render(request,"postAlumni.html",abc)
 
 def encrypt(var):
@@ -375,17 +420,14 @@ def ans(request,id):
     return render(request,"answers.html",{'context':context})
 
 def LogOut(request):
-    try:
-        del request.session['uid']
-    except KeyError:
-        pass
+    logout(request)
     return render(request,'index.html')
 
 def runCheck(request):
     uploaded_file = 0
     if request.method == "POST":
 
-        base_dir = "C:/Users/Amrut/Desktop/askIt/finalYrRawFiles/askIt/askIt/media"
+        base_dir = "C:/Users/Amrut/Desktop/askIt2021/finalYrRawFiles/askIt/askIt/media"
         for f in os.listdir(base_dir):
             os.remove(os.path.join(base_dir, f))
 
@@ -395,7 +437,7 @@ def runCheck(request):
     else:
         return render(request,"register3.html")
     if(uploaded_file != 0):
-        base_dir = "C:/Users/Amrut/Desktop/askIt/finalYrRawFiles/askIt/askIt/media"
+        base_dir = "C:/Users/Amrut/Desktop/askIt2021/finalYrRawFiles/askIt/askIt/media"
         fileList = os.listdir(base_dir)
         print(fileList)
         image = os.path.join(base_dir,fileList[0])
@@ -418,61 +460,59 @@ def runCheck(request):
 
 ############################################
 
-# # TO POPULATE QnA
+# TO POPULATE QnA
 
-# def populateDb(request):
-#     # try:
-#     pk = UserCred.objects.filter(email="tarun@gmail.com")
-#     print(pk[0])
-#     # csv_path = finders.find('C:/Users/Amrut/Desktop/finalYrRawFiles/askIt/scrap/alumniData.csv')
-#     with open('C:/Users/Amrut/Desktop/askIt/finalYrRawFiles/askIt/scrap/QnA.csv', newline='') as f:
-#         reader = csv.reader(f)
-#         data = list(reader)
-
-
-#     for j in range(2,len(data)):
-#         print("Question")
-#         qstn = data[j][0]
-#         print(qstn)
-#         putData1 = Questions(question=qstn,userWhoAsked=pk[0] )
-#         putData1.save() 
-#         for i in range(1,3):
-#             print(data[j][i])
-#             putData = Answers(answer=data[j][i],ansTo=putData1)
-#             putData.save()
-
-#     return HttpResponse("status:200")
-#     # except:
-#     #     return HttpResponse("Error")
-
-
-#TO POPULATE USERS
 def populateDb(request):
     # try:
-        # csv_path = finders.find('C:/Users/Amrut/Desktop/finalYrRawFiles/askIt/scrap/alumniData.csv')
-    with open('C:/Users/Amrut/Desktop/askIt/finalYrRawFiles/askIt/scrap/alumniData.csv', newline='') as f:
+    with open('C:/Users/Amrut/Desktop/askIt/finalYrRawFiles/askIt/scrap/Ans.csv', newline='') as f:
         reader = csv.reader(f)
         data = list(reader)
 
+    for j in range(2,len(data)):
+        ans = data[j][0]
+        upVotes = data[j][1]
+        downVotes = data[j][2]
+        score = data[j][3]
+        ansTo = data[j][4]
+        author = data[j][5]
+        
 
-    for j in range(1,len(data)):
-        email = data[j][0]
-        passW = encrypt(data[j][1])
-        fullName = data[j][2]
-        userName = data[j][3]
-        phone = data[j][4]
-        userT = data[j][5]
-
-        putData1 = UserCred(email=email,password=passW)
-        putData1.save()     
-
-
-        putData = UserInfo(fullName=fullName,userName=userName,phoneNumber=phone,userType=userT, keyLink=putData1)
+        usr = User.objects.filter(email = author)
+        qtn = Questions.objects.filter(question = ansTo)
+        putData = Answers(answer=ans,upVotes=upVotes,downVotes=downVotes,ansTo=qtn[0],author=usr[0])
         putData.save()
 
     return HttpResponse("status:200")
     # except:
     #     return HttpResponse("Error")
+
+
+# #TO POPULATE USERS
+# def populateDb(request):
+#     # try:
+#         # csv_path = finders.find('C:/Users/Amrut/Desktop/finalYrRawFiles/askIt/scrap/alumniData.csv')
+#         with open('C:/Users/Amrut/Desktop/askIt/finalYrRawFiles/askIt/scrap/Person.csv', newline='') as f:
+#             reader = csv.reader(f)
+#             data = list(reader)
+
+#         for j in range(2,len(data)):
+#             email    = data[j][0]
+#             password = data[j][1]
+#             fullName = data[j][2]
+#             userName = data[j][3]
+#             phone    = data[j][4]
+#             userType = data[j][5]
+#             keyLink  = data[j][6]
+#             print(email,password,fullName,userName,phone,userType,keyLink)   
+
+#             pd = UserCred(email = email,password=password)
+#             pd.save()
+#             putData = UserInfo(fullName=fullName,userName=userName,phoneNo=phone,userType=userType, keyLink=pd)
+#             putData.save()
+
+#         return HttpResponse("status:200")
+#     # except:
+#     #     return HttpResponse("Error")
 
 ##############################################
 
@@ -480,3 +520,11 @@ def abc(request):
 
     return render(request,"abc.html")
 ##############################################
+
+
+def display(request):
+    name = "amrut"
+    context = {
+        "dynamicUserName":name
+    }
+    return render(request,"index.html",context)

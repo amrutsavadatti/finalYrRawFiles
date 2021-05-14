@@ -1,0 +1,23 @@
+{% extends 'boilerplate.html' %}
+{% block cssStatic %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'register.css' %}">
+{% endblock cssStatic %}
+{% block boilerBody %}
+
+
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="#">Ask-it</a>
+</nav>
+
+<div class="container">
+  <div class="title">Email Verification</div>
+    <div class="card-body">
+        <h3 class="card-title text-center" style="color:#0d752f">We have sent you a verification link on your registered email </h3>
+    </div>        
+</div>
+{% endblock boilerBody %}
+  
+  
+  
+  
