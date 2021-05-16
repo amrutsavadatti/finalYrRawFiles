@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from Forum import views
 from .views import *
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -18,7 +19,7 @@ urlpatterns = [
     path("postAlumni", views.takeToHome, name = "postAlumni"),
     path("postStack", views.home1, name = "postStack"),
     path("profile", views.profile, name = "Profile"),
-    path("askAlumni", AjaxHandlerView.as_view()),
+    path("askAlumni", login_required(AjaxHandlerView.as_view())),
     path("alumni", views.alumni, name = "Alumni"),
     path("chat", views.chatBox, name = "chat"),
     path("answers/<int:id>", views.ans, name = "ans"),
@@ -27,6 +28,7 @@ urlpatterns = [
     path("logOut", views.LogOut, name = "LogOut"),
     path("search/", PublisherDocumentView.as_view({'get' : 'list'})),
     path("tatti", tattiFun, name = "poop"),
+    path("notifications", notify, name = "notify"),
 
 ]
 

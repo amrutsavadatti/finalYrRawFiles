@@ -5,6 +5,21 @@
 {% endblock cssStatic %}
 {% block boilerBody %}
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+		$(document).ready(function(){
+      var str2 = "student";
+      var str1;
+      if ($("#userType").val()=="student"){
+        str1 = $("#emailType").val();
+        if(str1.indexOf(str2) == -1){
+            $("#alert").text("pls enter sfit email id")
+        }
+      }
+		});
+	</script>
+
 
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
   <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="#">Ask-it</a>
@@ -12,7 +27,8 @@
 
 <div class="container">
   <div class="title">Registration</div>
-  <form action="register2" method="POST">{% csrf_token %}
+  <form action="register2" method="POST">
+  {% csrf_token %}
   <div class="row">
               <div class = "col mt-5" > 
                   
@@ -34,7 +50,7 @@
             <div class="user-details">
               <div class="input-box">
                 <span class="details">Alumni / Student</span>
-                <input type="text" name="uType" placeholder="eg. alumni " required>
+                <input id="userType" type="text" name="uType" placeholder="eg. alumni " required>
               </div>
               <div class="input-box">
                 <span class="details">First Name</span>
@@ -50,7 +66,8 @@
               </div>
               <div class="input-box">
                 <span class="details">Email</span>
-                <input type="text" name="email" placeholder="Enter your email" required>
+                <input id="emailType" type="text" name="email" placeholder="Enter your email" required>
+                <p id="alert"></p>
               </div>
               <div class="input-box">
                 <span class="details">Phone Number</span>

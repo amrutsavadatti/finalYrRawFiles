@@ -9,7 +9,8 @@ admin.site.register(UserInfo)
 admin.site.register(Questions)
 admin.site.register(Answers)
 admin.site.register(Comments)
-admin.site.register(Replies)
+admin.site.register(userResponses)
 admin.site.register(Skills)
+admin.site.register(userSkills)
 
 

@@ -53,7 +53,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 
-@login_required
+
+
 def tattiFun(request):
     usr = request.user
     print(usr)
@@ -81,16 +82,11 @@ class AjaxHandlerView(View):
                     return JsonResponse({"Cuss":allGood},status=200)
                 except:
                     return JsonResponse({"Cuss":"couldnt upload"},status=200)
-        try:
-            request.session['uid']
-            
-        except:
-            return HttpResponse("U are logged out")
-        
+
 
         try:
-            getData = UserInfo.objects.all()
-            getEData = User.objects.all()
+            # getEData = User.objects.all()
+            getUserInfo = UserInfo.objects.filter(is_verified = True ,userType = "alumni")
         except:
             return HttpResponse("Couldnt fetch Data")
 
@@ -98,36 +94,18 @@ class AjaxHandlerView(View):
         alumniEmail = []
         img=[]
 
-        for ppl in getData:
-            alumniName.append(ppl.fullName)
-        for ppl in getEData:
-            alumniEmail.append(ppl.email)
-
-        for i in range(len(alumniName)):
-            img.append(random.randint(1,3))
+        alumniName = [f"{ppl.user.first_name} {ppl.user.last_name}" for ppl in getUserInfo]
+        alumniEmail = [ppl.user.email for ppl in getUserInfo]
+        img=[random.randint(1,3) for i in range(len(alumniName))]
 
         info = zip(alumniName,img,alumniEmail)
+        print(info)
+
+        # info = [(f"{ppl.user.first_name} {ppl.user.last_name}", ppl.user.email, random.randint(1, 3)) for ppl, in getUserInfo)]
         
         return render(request,"askAlumni.html",{'info':info})
 
-# ElasticSearch tutorial 
-def generate_random_data():
-    url = "https://newsapi.org/v2/everything?q=tesla&from=2021-03-28&sortBy=publishedAt&apiKey=ef39d7a9f9ee4c0ca68745eee26cb99a"
-    r = requests.get(url)
-    payload = json.loads(r.text)
-    count = 1
-    for data in payload.get('articles'):
-        print(count)
-        ElasticDemo.objects.create(
-            tittle = data.get('title'),
-            content = data.get('description')
-        )
-        count+=1
 
-
-def index(request):
-    generate_random_data()
-    return JsonResponse({'status':200})
 
 class PublisherDocumentView(DocumentViewSet):
     
@@ -152,9 +130,6 @@ class PublisherDocumentView(DocumentViewSet):
     ordering = ( 'id')
     
         
-
-
-
 
 def login_attempt(request):
     if request.method == 'POST':
@@ -257,36 +232,23 @@ def takeToHome(request):
 
 
 
-
+@login_required
 def alumni(request):
-    try:
-        request.session['uid']
-        
-    except:
-        return HttpResponse("U are logged out")
-    
 
     try:
-        getData = UserInfo.objects.all()
-        getEData = User.objects.all()
+        getUserInfo = UserInfo.objects.filter(is_verified = True ,userType = "alumni")
     except:
         return HttpResponse("Couldnt fetch Data")
 
-    alumniName = []
-    alumniEmail = []
-    img=[]
-
-    for ppl in getData:
-        alumniName.append(ppl.fullName)
-    for ppl in getEData:
-        alumniEmail.append(ppl.email)
-    for i in range(len(alumniName)):
-        img.append(random.randint(1,3))
-
+    alumniName = [f"{ppl.user.first_name} {ppl.user.last_name}" for ppl in getUserInfo]
+    alumniEmail = [ppl.user.email for ppl in getUserInfo]
+    img=[random.randint(1,3) for i in range(len(alumniName))]
 
     info = zip(alumniName,img,alumniEmail)
     return render(request,"alumni.html",{'info':info})
-  
+
+def notify(request):
+    return render(request,"notifications.html")
 
 def Register1(request):
     return render(request,"register1.html")
@@ -312,8 +274,6 @@ def Register2(request):
         phoneNumber = request.POST.get("phoneNumber")
         userType = request.POST.get("uType")
 
-        print(password)
-
         try:
             if User.objects.filter(username = userName).first():
                 messages.success(request, 'Username is taken.')
@@ -332,7 +292,7 @@ def Register2(request):
             info_obj.save()
 
             send_mail_after_registration(email , auth_token)
-
+            request.session['uName'] = user_obj.username
             return redirect('/token')
 
         except Exception as e:
@@ -375,24 +335,16 @@ def encrypt(var):
     crypt.update(bytes(var,'utf-8'))
     return(crypt.hexdigest())
 
-
+@login_required
 def home1(request):
-    try:
-        request.session['uid']
-    
-    except:
-        return HttpResponse("U are logged out")
 
     return render(request,"postStack.html")
 
+@login_required
 def profile(request):
-    try:
-        request.session['uid']
-    
-    except:
-        return HttpResponse("U are logged out")
     return render(request,"profile.html")
 
+@login_required
 def askAlumni(request):
     return render(request,"askAlumni.html")
 
@@ -446,6 +398,16 @@ def runCheck(request):
         ans = execute(image)
 
         if ans == "1":
+            # request.session['uName'] = "vinutha"
+            user_object = User.objects.all()
+            for usr in user_object:
+                if usr.username == request.session['uName']:
+                    userCheck = UserInfo.objects.filter(user = usr).first()
+                    print(userCheck.markSheet_verified)
+                    userCheck.markSheet_verified = True
+                    userCheck.save()
+                    print(userCheck.markSheet_verified)
+
             return render(request,"postAlumni.html",{"ans":"You Are All Set To Go !!"})
         elif ans == "-1":
             return render(request,"register3.html",{"err":"Make sure image is readable"})
@@ -464,23 +426,29 @@ def runCheck(request):
 
 def populateDb(request):
     # try:
-    with open('C:/Users/Amrut/Desktop/askIt/finalYrRawFiles/askIt/scrap/Ans.csv', newline='') as f:
+    with open('C:/Users/Amrut/Desktop/askIt2021/finalYrRawFiles/askIt/scrap/comments2.csv', newline='') as f:
         reader = csv.reader(f)
         data = list(reader)
 
     for j in range(2,len(data)):
-        ans = data[j][0]
-        upVotes = data[j][1]
-        downVotes = data[j][2]
-        score = data[j][3]
-        ansTo = data[j][4]
-        author = data[j][5]
+        com = data[j][0]
+        cTo = data[j][3]
+        pos = True if data[j][4] == "TRUE" else False
+        auth = data[j][5]
+        reply = data[j][6]
+        if reply:
+            putData = User.objects.filter(email = auth)
+            putA = Answers.objects.filter(answer = cTo)
+            print(putA)
+            pd = Comments(comment = com,commentToAnswer=putA[0],author=putData[0],posSentiment = pos,replyTo = reply)
+            pd.save()
+            continue
         
-
-        usr = User.objects.filter(email = author)
-        qtn = Questions.objects.filter(question = ansTo)
-        putData = Answers(answer=ans,upVotes=upVotes,downVotes=downVotes,ansTo=qtn[0],author=usr[0])
-        putData.save()
+        putData = User.objects.filter(email = auth)
+        putA = Answers.objects.filter(answer = cTo)
+        pd = Comments(comment = com,commentToAnswer=putA[0],author=putData[0],posSentiment = pos)
+        pd.save()
+        
 
     return HttpResponse("status:200")
     # except:
