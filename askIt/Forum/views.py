@@ -53,6 +53,13 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 
+from .w2v import *
+
+
+def getSkills(request):
+    ans=test("how to make lists using c++")
+    print(ans)
+    return render(request,"askAlumni.html")
 
 
 def tattiFun(request):
@@ -83,9 +90,12 @@ class AjaxHandlerView(View):
                 except:
                     return JsonResponse({"Cuss":"couldnt upload"},status=200)
 
+        qtn = request.session["cachedQtn"]
+        print(qtn)
+        ans=test(qtn)
+        print(ans)
 
         try:
-            # getEData = User.objects.all()
             getUserInfo = UserInfo.objects.filter(is_verified = True ,userType = "alumni")
         except:
             return HttpResponse("Couldnt fetch Data")
@@ -99,9 +109,9 @@ class AjaxHandlerView(View):
         img=[random.randint(1,3) for i in range(len(alumniName))]
 
         info = zip(alumniName,img,alumniEmail)
-        print(info)
 
         # info = [(f"{ppl.user.first_name} {ppl.user.last_name}", ppl.user.email, random.randint(1, 3)) for ppl, in getUserInfo)]
+        
         
         return render(request,"askAlumni.html",{'info':info})
 
@@ -154,10 +164,14 @@ def login_attempt(request):
             return redirect('/accounts/login')
         
         login(request , user)
-        
-        return redirect('/postAlumni')
+        return redirect('/getIn')
 
     return render(request , 'login.html')
+
+@login_required
+def getIn(request):
+    #put recent questions here
+    return render(request,"postAlumni.html")
 
 
 @login_required
@@ -186,11 +200,15 @@ def Account(request):
 def takeToHome(request):
     if request.method == "POST" and request.POST.get("searchInput")!=None:
         base = "http://127.0.0.1:8000/search/?search="
+
         # print(requests.get("http://127.0.0.1:8000/search/?search=django").json())
-        sQuery = request.POST.get("searchInput")
+
+        sQuery = request.session["cachedQtn"] = request.POST.get("searchInput")
+        print("#" + sQuery)
         op = requests.get(base+sQuery).json()
-        print(op)
-        print(op[0]['ansTo']['id'])
+        request.session['previousSearch'] = op
+        # print(op)
+        # print(op[0]['ansTo']['id'])
         qList = []
         idList=[]
         id = -1
@@ -200,35 +218,23 @@ def takeToHome(request):
                 id=op[i]['ansTo']['id']
                 idList.append(id)
         print(qList)
-        info = zip(idList,qList)                
+        info = zip(idList,qList)
+        
+        print("1" + request.session['cachedQtn'])
         return render(request,"postAlumni.html",{'info':info})
-        
-
-    comb_lst=[]
-    if request.method == "POST":
-        emailCheck = request.POST.get("email")
-        passwordCheck = request.POST.get("pass")
-        
-        try:
-            # user = auth.sign_in_with_email_and_password(email,password)
-            getData = User.objects.all()
-            
-            for users in getData:
-                if users.email == emailCheck and users.password == passwordCheck:
-                    request.session['uid'] = users.id
-
-        except:
-            message = " Incorrect email or password"
-            return render(request,"login.html",{"alertMessage":message})
-        
-    try:
-        Qs = QuestionsAsked.objects.filter(keyLink = request.session['uid'])
-        for q in Qs:
-            comb_lst.append(q.Question)
-
-        return render(request,"postAlumni.html",{'comb_lst':comb_lst})
-    except:
-        return render(request,"postAlumni.html",{'comb_lst':comb_lst})
+    else:
+        op = request.session['previousSearch']
+        qList = []
+        idList=[]
+        id = -1
+        for i in range(len(op)):
+            if op[i]['ansTo']['id']!=id:
+                qList.append(op[i]['ansTo']['question'])
+                id=op[i]['ansTo']['id']
+                idList.append(id)
+        info = zip(idList,qList)
+        print(request.session['cachedQtn'])
+        return render(request,"postAlumni.html",{'info':info})
 
 
 
@@ -344,9 +350,6 @@ def home1(request):
 def profile(request):
     return render(request,"profile.html")
 
-@login_required
-def askAlumni(request):
-    return render(request,"askAlumni.html")
 
 def chatBox(request):
     return render(request,"chat.html")

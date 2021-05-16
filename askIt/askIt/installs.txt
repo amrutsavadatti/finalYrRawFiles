@@ -1,8 +1,19 @@
-requests
-beautifulsoup
-better_profanity
-pyrebase
-ocrspace
-tensorflow
-cv2
-elasticsearch_dsl
+pip install
+    requests
+    beautifulsoup
+    better_profanity
+    pyrebase
+    ocrspace
+    tensorflow
+    cv2
+    elasticsearch_dsl
+
+    gensim
+    python-Levenshtein
+    nltk
+    re
+
+before installing the below given libraries make sure to install build in tools of C++ from microsoft visual studio
+the link is :
+https://visualstudio.microsoft.com/visual-cpp-build-tools/
+

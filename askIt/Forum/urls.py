@@ -29,7 +29,8 @@ urlpatterns = [
     path("search/", PublisherDocumentView.as_view({'get' : 'list'})),
     path("tatti", tattiFun, name = "poop"),
     path("notifications", notify, name = "notify"),
-
+    path("s", getSkills, name = "gs"),
+    path("getIn", getIn, name = "getIn"),
 ]
 
 # urlpatterns = [
