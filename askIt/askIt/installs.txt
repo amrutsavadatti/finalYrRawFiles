@@ -7,11 +7,13 @@ pip install
     tensorflow
     cv2
     elasticsearch_dsl
+    textblob
 
     gensim
     python-Levenshtein
     nltk
     re
+    python -m nltk.downloader all
 
 before installing the below given libraries make sure to install build in tools of C++ from microsoft visual studio
 the link is :

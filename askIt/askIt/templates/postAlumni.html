@@ -14,25 +14,25 @@
 
                         <ul class="nav nav-tabs" >
                         <li class="nav-item">
-                            <a class="nav-link active" href="postAlumni" style="color:grey">Alumni</a>
+                            <a class="nav-link active" href="/postAlumni" style="color:grey">Alumni</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="postStack" style="color:#007bff">StackOverflow</a>
+                            <a class="nav-link " href="/postStack" style="color:#007bff">StackOverflow</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="askAlumni" style="color:#grey">Ask Alumni</a>
+                            <a class="nav-link " href="/askAlumni" style="color:#grey">Ask Alumni</a>
                         </li>                        
                         </ul>
 
                         {% comment %} this is blogPost  {% endcomment %}
 
-                        {% for i,j in info  %}
+                        {% for i,j,k in info  %}
                         <div class="border border-info rounded m-1 p-2 ">
                           <a href="answers/{{i}}">{{j}}</a>
                           <p style="font-size:12px">12/3/2021</p>
                                                     <p style="font-size:12px">{{ppl}}</p>
                           <p>
-                            short answer peek view (Description)
+                            {{k}}
                           </p>
                             <div class="row mx-1">
                                 <div class="col-md-auto" style="background-color:white">

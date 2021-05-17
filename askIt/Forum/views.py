@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse
 from django.contrib.auth.models import User
 from .crawler import getPosts
 from better_profanity import profanity
+from textblob import TextBlob
 from django.views.generic import View
 from django.http import JsonResponse
 import hashlib
@@ -56,6 +57,7 @@ from django.utils.encoding import force_bytes
 from .w2v import *
 
 
+
 def getSkills(request):
     ans=test("how to make lists using c++")
     print(ans)
@@ -63,8 +65,8 @@ def getSkills(request):
 
 
 def tattiFun(request):
-    usr = request.user
-    print(usr)
+    usr = request.user#gives username
+    print(request.user.first_name)
     return render(request,'tattiIdea.html')
 
 
@@ -90,22 +92,29 @@ class AjaxHandlerView(View):
                 except:
                     return JsonResponse({"Cuss":"couldnt upload"},status=200)
 
+        #gets related skills here
         qtn = request.session["cachedQtn"]
         print(qtn)
         ans=test(qtn)
         print(ans)
 
+        skillSet = [item.id for skill in ans for item in Skills.objects.filter(skill = skill)]
+        print(skillSet)
+        usersSet = set([user.user for skill in skillSet for user in  userSkills.objects.filter(skill = skill)])
+        print(usersSet)
+
+        userToPrint = [user for obj in usersSet for user in  UserInfo.objects.filter(user = obj, is_verified = True ,userType = "alumni",markSheet_verified = True)]
+        
+
         try:
-            getUserInfo = UserInfo.objects.filter(is_verified = True ,userType = "alumni")
+            getUserInfo = UserInfo.objects.filter(is_verified = True ,userType = "alumni",markSheet_verified = True)
         except:
             return HttpResponse("Couldnt fetch Data")
 
-        alumniName = []
-        alumniEmail = []
-        img=[]
 
-        alumniName = [f"{ppl.user.first_name} {ppl.user.last_name}" for ppl in getUserInfo]
-        alumniEmail = [ppl.user.email for ppl in getUserInfo]
+        alumniName = [f"{ppl.user.first_name} {ppl.user.last_name}" for ppl in userToPrint]
+        print(alumniName)
+        alumniEmail = [ppl.user.email for ppl in userToPrint]
         img=[random.randint(1,3) for i in range(len(alumniName))]
 
         info = zip(alumniName,img,alumniEmail)
@@ -211,30 +220,36 @@ def takeToHome(request):
         # print(op[0]['ansTo']['id'])
         qList = []
         idList=[]
+        ansList=[]
         id = -1
         for i in range(len(op)):
             if op[i]['ansTo']['id']!=id:
                 qList.append(op[i]['ansTo']['question'])
                 id=op[i]['ansTo']['id']
                 idList.append(id)
+                ansList.append(op[i]['answer'][0:100])
         print(qList)
-        info = zip(idList,qList)
+        info = zip(idList,qList,ansList)
         
-        print("1" + request.session['cachedQtn'])
         return render(request,"postAlumni.html",{'info':info})
     else:
-        op = request.session['previousSearch']
-        qList = []
-        idList=[]
-        id = -1
-        for i in range(len(op)):
-            if op[i]['ansTo']['id']!=id:
-                qList.append(op[i]['ansTo']['question'])
-                id=op[i]['ansTo']['id']
-                idList.append(id)
-        info = zip(idList,qList)
-        print(request.session['cachedQtn'])
-        return render(request,"postAlumni.html",{'info':info})
+        try:
+            op = request.session['previousSearch']
+            qList = []
+            idList=[]
+            ansList=[]
+            id = -1
+            for i in range(len(op)):
+                if op[i]['ansTo']['id']!=id:
+                    qList.append(op[i]['ansTo']['question'])
+                    id=op[i]['ansTo']['id']
+                    idList.append(id)
+                    ansList.append(op[i]['answer'][0:100])
+            info = zip(idList,qList,ansList)
+            print(request.session['cachedQtn'])
+            return render(request,"postAlumni.html",{'info':info})
+        except:
+            return render(request,"postAlumni.html")
 
 
 
@@ -357,22 +372,90 @@ def chatBox(request):
 def checkProfanity(comment):
     return profanity.contains_profanity(comment)
 
-def ans(request,id):
-    print(id)
-    
-    getQ = Questions.objects.filter(id=id)
-    getAns = Answers.objects.filter(ansTo=getQ[0])
-    ansList=[]
-    for ans in getAns:
-        ansList.append(ans.answer)
+class AjaxAnsView(View):
+    def get(self,request,id):
+        alert = "Offensive or inappropriate language used...cant post"
+        allGood = "1"
+        text = request.GET.get("userPost")
+        status = checkProfanity(text)
+        if request.is_ajax():
+            print(request)
+            if(status == True):
+                return JsonResponse({"Cuss":alert},status=200)
+            elif(text == ""):
+                return JsonResponse({"Cuss":"Blank Question cant be posted"},status=200)
+            else:
+                try:
+                    usr = User.objects.filter(username = request.user).first()
+                    qtn = Questions.objects.filter(id = id).first()
+                    ans = Answers(answer = text,ansTo = qtn,author = usr)
+                    ans.save()
+                    return JsonResponse({"Cuss":allGood},status=200)
+                except:
+                    return JsonResponse({"Cuss":"couldnt upload"},status=200)
+        
+        getQ = Questions.objects.filter(id=id)
+        ansList=[ans.answer for ans in Answers.objects.filter(ansTo=getQ[0])]
+        ansObj = [ans for ans in Answers.objects.filter(ansTo=getQ[0])]
+        # print(ansObj)
+        commentList = [comment for ans in ansObj for comment in Comments.objects.filter(commentToAnswer = ans)]
+        # print(commentList)
 
-    context={
-        'question':getQ[0].question,
-        'ansList' :ansList
-    }
+        BigList = []
+        for i in ansObj:
+            BigList.append([i.answer,Comments.objects.filter(commentToAnswer = i)])
+        
+        # print(BigList)
+
+    # [ [ans1, [c11, c12, ....]], [ans2, [c21, c22, ...]], ... ]
+
+        context={
+            'question':getQ[0],
+            'ansObj':ansObj
+        }
+        
 
 
-    return render(request,"answers.html",{'context':context})
+        return render(request,"answers.html",{'context':context})
+
+class AjaxComView(View):
+    def get(self,request,id):
+        alert = "Offensive or inappropriate language used...cant post"
+        allGood = "1"
+        text = request.GET.get("userPost")
+        # if request.GET.get("isReply") == True:
+
+        status = checkProfanity(text)
+
+
+        if request.is_ajax():
+            # check sentiment
+            sentiment = True if TextBlob(text).sentiment.polarity >=0 else False
+            print(sentiment)
+
+            if(status == True):
+                return JsonResponse({"Cuss":alert},status=200)
+            elif(text == ""):
+                return JsonResponse({"Cuss":"Blank Question cant be posted"},status=200)
+            else:
+                try:
+                    usr = User.objects.filter(username = request.user).first()
+                    ans = Answers.objects.filter(id = id).first()
+                    com = Comments(comment = text, commentToAnswer = ans, posSentiment=sentiment, author = usr)
+                    com.save()
+                    return JsonResponse({"Cuss":allGood},status=200)
+                except:
+                    return JsonResponse({"Cuss":"couldnt upload"},status=200)
+
+
+        getA = Answers.objects.filter(id=id)
+        commentList = Comments.objects.filter(commentToAnswer = getA[0])
+        print(commentList)
+        context = {
+            'ans':getA[0].answer,
+            'comments':commentList
+        }
+        return render(request,'comments.html',{'context':context})
 
 def LogOut(request):
     logout(request)

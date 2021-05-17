@@ -9,7 +9,6 @@ from nltk.tokenize import word_tokenize
 import nltk
 from nltk.stem import WordNetLemmatizer
 import re
-# set(stopwords.words('english'))
 
 def test(sentence):
   text =sentence
@@ -35,6 +34,7 @@ def test(sentence):
   if (len(final)!=0):
   #print(skills['skill.name'])
     all_related_list=[]
+    skill_set=[]
     for i in final:
       i=i.lower() #convert the given string into lower case
       i = re.sub('[()]', '', i)
@@ -42,11 +42,12 @@ def test(sentence):
       for s in k:
         for j in model.wv.key_to_index:
           if j==s and j!='language':
+            skill_set.append(j)
             all_related_list.append(model.wv.similar_by_word(j))
 
 
   #print(all_related_list)
-    skill_set=[]
+      
     for i in all_related_list:
       for j in i:
         for k in range(0,len(j),2):
