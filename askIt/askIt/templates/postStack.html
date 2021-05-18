@@ -15,7 +15,7 @@
                             <a class="nav-link" href="postAlumni" style="color:#007bff">Alumni</a>
                         </li>
                         <li class="nav-item ">
-                            <a class="nav-link active" href="postStack" style="color:grey">StackOverflow</a>
+                            <a class="nav-link active" href="postStack" style="color:grey">Google</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link " href="askAlumni" style="color:#grey">Ask Alumni</a>
@@ -24,43 +24,12 @@
 
                         {% comment %} this is blogPost  {% endcomment %}
 
-                        {% for i in "0123456789" %}
+                        {% for i in result %}
                         <div class="border border-info rounded m-1 p-2 ">
-                          <a href="#">Title</a>
-                          <p style="font-size:12px">12/3/2021</p>
+                          <a href="{{i.link}}" target="_blank" rel="noopener noreferrer">{{i.title}}</a>
                           <p>
-                            sjdvjdvlsdyvcsldhvy definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.
-                            waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub .
-
-                            waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub .
-
-                            waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub .
-
-                            waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub .
-
-                            waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub waba luba dub dub A
+                            {{i.text}}
                           </p>
-                            <div class="row mx-1">
-                                <div class="col-md-auto" style="background-color:white">
-                                <img src="{% static 'upvote.png' %}">
-                                <p style="font-size:12px;padding-left:35%">{{i}}</p>
-                                </div>
-                                <div class="col-md-auto" style="background-color:white">
-                                <img src="{% static 'downvote.png' %}">
-                                <p style="font-size:12px;padding-left:35%">{{i}}</p>
-                                </div>
-                                <div class="col-md-auto " style="background-color:white">
-                                    <a data-toggle="collapse" href="#collapseExample{{i}}" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                        <img src="{% static 'comment.png' %}">
-                                        <p style="font-size:12px;padding-left:35%">{{i}}</p>  
-                                    </a>                                
-                                </div>                                
-                            </div>
-                            <div class="collapse" id="collapseExample{{i}}">
-                                <div class="card card-body">
-                                    <textarea class="form-control" aria-label="With textarea"></textarea>
-                                </div>
-                            </div>
                         </div>                        
                         {% endfor %}
 

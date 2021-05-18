@@ -13,7 +13,7 @@
                     type: "get",
                     data: {
                         userPost : $("#myText").val(),
-                        isReply: -1
+                        isReply: "-1"
                     },
                     success: function(response){
                         if (response.Cuss != "1"){
@@ -37,7 +37,6 @@
                         type: "get",
                         data: {
                             userPost : $("#myTextR").val(),
-                            isReply: true
                         },
                         success: function(response){
                             if (response.Cuss != "1"){

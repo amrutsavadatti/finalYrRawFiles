@@ -1,44 +1,44 @@
-import json
 import requests
+import urllib
+from fake_useragent import UserAgent
+import re
 from bs4 import BeautifulSoup
+  
 
-def getPosts(searchQ):
-    # Base url
+def search_query(query,number_result):
+    query = urllib.parse.quote_plus(query) # Format into URL encoding
+    ua = UserAgent()
+    google_url = "https://www.google.com/search?q=" + query + 'stackoverflow' +"&num=" + str(number_result)
+    response = requests.get(google_url, {"User-Agent": ua.random})
+    soup = BeautifulSoup(response.text, "html.parser")
     
-    searchQ=searchQ.replace(" ","+")
-    base_url = 'https://stackoverflow.com/questions/tagged/'
-    start_url = base_url + searchQ
+    result = soup.find_all('div', attrs = {'class': 'ZINbbc'})
+    results=[re.search('\/url\?q\=(.*)\&sa',str(i.find('a', href = True)['href'])) for i in result if "url" in str(i)]
+    links=[i.group(1) for i in results if i != None]
 
-    # Loop over Stack Overflow questions' pages
-    for page_num in range(1, 10):
-        # get next page url
-        url = start_url + str(page_num)
+
+    heading_object=soup.find_all( 'h3')
+    title=[info.getText() for info in heading_object if info != None]
+
+    text=soup.find_all('div', attrs = {'class': 's3v9rd'})
+    desc=[inf.getText() for inf in text if inf != None]
+    output=[]
+    
+    for i in range(0,number_result):
+
+        item = {
+            'title': title[i],
+            'link':links[i],
+            'text': desc[i]
+        }
         
-        # make HTTP GET request to the given url
-        response = requests.get(url)
-        
-        # parse content
-        content = BeautifulSoup(response.text, 'lxml')
+        output.append(item)
+    return(output)
 
-        # extract question links
-        links = content.findAll('a', {'class': 'question-hyperlink'})
+    
 
-        # extract question description
-        description = content.findAll('div', {'class': 'excerpt'})
-        
-        print('\n\nURL:', url)
 
-        question=[]
 
-        # loop over Stack Overflow question list
-        for index in range(0, len(description)):
-            # store items in dict
-            question.append({
-                'title': links[index].text,
-                'url': links[index]['href'],
-                'description': description[index].text.strip().replace('\n', '')
-            })
-            
-            #print(json.dumps(question, indent=2))
-    print(question)
+
+
 

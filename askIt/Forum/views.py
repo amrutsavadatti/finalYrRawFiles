@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from django.contrib.auth.models import User
-from .crawler import getPosts
+from .crawler import *
 from better_profanity import profanity
 from textblob import TextBlob
 from django.views.generic import View
@@ -55,6 +55,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 
 from .w2v import *
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 
@@ -82,47 +84,41 @@ class AjaxHandlerView(View):
             elif(text == ""):
                 return JsonResponse({"Cuss":"Blank Question cant be posted"},status=200)
             else:
-                data={
-                    'Question_asked':text,
-                    'first_name':"custom_user"
-                }
                 try:
-                    database.child("Questions").child(random.randint(20,10000)).set(data)
+                    usr = User.objects.filter(username = request.user).first()
+                    qtn = Questions(question = text,userWhoAsked = usr)
+                    qtn.save()
                     return JsonResponse({"Cuss":allGood},status=200)
                 except:
                     return JsonResponse({"Cuss":"couldnt upload"},status=200)
 
-        #gets related skills here
-        qtn = request.session["cachedQtn"]
-        print(qtn)
-        ans=test(qtn)
-        print(ans)
-
-        skillSet = [item.id for skill in ans for item in Skills.objects.filter(skill = skill)]
-        print(skillSet)
-        usersSet = set([user.user for skill in skillSet for user in  userSkills.objects.filter(skill = skill)])
-        print(usersSet)
-
-        userToPrint = [user for obj in usersSet for user in  UserInfo.objects.filter(user = obj, is_verified = True ,userType = "alumni",markSheet_verified = True)]
-        
-
         try:
-            getUserInfo = UserInfo.objects.filter(is_verified = True ,userType = "alumni",markSheet_verified = True)
+            #gets related skills here
+            qtn = request.session["cachedQtn"]
+            # print(qtn)
+            ans=test(qtn)
+            # print(ans)
+
+            skillSet = [item.id for skill in ans for item in Skills.objects.filter(skill = skill)]
+            print(skillSet)
+            usersSet = set([user.user for skill in skillSet for user in  userSkills.objects.filter(skill = skill)])
+            print(usersSet)
+
+            userToPrint = [user for obj in usersSet for user in  UserInfo.objects.filter(user = obj, is_verified = True ,userType = "alumni",markSheet_verified = True)]
+            
+            alumniName = [f"{ppl.user.first_name} {ppl.user.last_name}" for ppl in userToPrint]
+            print(alumniName)
+            alumniEmail = [ppl.user.email for ppl in userToPrint]
+            img=[random.randint(1,3) for i in range(len(alumniName))]
+
+            info = zip(alumniName,img,alumniEmail)
+
+            # info = [(f"{ppl.user.first_name} {ppl.user.last_name}", ppl.user.email, random.randint(1, 3)) for ppl, in getUserInfo)]
+            
+            
+            return render(request,"askAlumni.html",{'info':info})
         except:
-            return HttpResponse("Couldnt fetch Data")
-
-
-        alumniName = [f"{ppl.user.first_name} {ppl.user.last_name}" for ppl in userToPrint]
-        print(alumniName)
-        alumniEmail = [ppl.user.email for ppl in userToPrint]
-        img=[random.randint(1,3) for i in range(len(alumniName))]
-
-        info = zip(alumniName,img,alumniEmail)
-
-        # info = [(f"{ppl.user.first_name} {ppl.user.last_name}", ppl.user.email, random.randint(1, 3)) for ppl, in getUserInfo)]
-        
-        
-        return render(request,"askAlumni.html",{'info':info})
+            return render(request,"askAlumni.html")
 
 
 
@@ -255,7 +251,6 @@ def takeToHome(request):
 
 @login_required
 def alumni(request):
-
     try:
         getUserInfo = UserInfo.objects.filter(is_verified = True ,userType = "alumni")
     except:
@@ -268,8 +263,17 @@ def alumni(request):
     info = zip(alumniName,img,alumniEmail)
     return render(request,"alumni.html",{'info':info})
 
+@login_required
 def notify(request):
-    return render(request,"notifications.html")
+    usr = User.objects.filter(username = request.user).first()
+    notifications = Notifications.objects.filter(user = usr)
+    print(usr)
+    print(notifications)
+    context={
+        'notifications':notifications
+    }
+
+    return render(request,"notifications.html",{'context':context})
 
 def Register1(request):
     return render(request,"register1.html")
@@ -324,7 +328,6 @@ def Register2(request):
 def verify(request , auth_token):
     try:
         profile_obj = UserInfo.objects.filter(auth_token = auth_token).first()
-    
 
         if profile_obj:
             if profile_obj.is_verified:
@@ -344,7 +347,7 @@ def error_page(request):
     return  render(request , 'error.html')
 
 
-
+@login_required
 def home(request):
     if request.method == "POST":
         sQuery = request.POST.get("searchInput")
@@ -358,12 +361,26 @@ def encrypt(var):
 
 @login_required
 def home1(request):
+    try:
+        query = request.session['cachedQtn']
+        getGoogle = search_query(query,20)
+        return render(request,"postStack.html",{'result':getGoogle})
+    except:
+         return render(request,"postStack.html")
 
-    return render(request,"postStack.html")
 
 @login_required
 def profile(request):
-    return render(request,"profile.html")
+    usr = User.objects.filter(username = request.user).first()
+    usrInfo = UserInfo.objects.filter(user = usr).first()
+    skillsToPrint = [skill.skill.skill for skill in  userSkills.objects.filter(user = usr)]
+    print(skillsToPrint)
+    context={
+        'user':usr,
+        'uInfo':usrInfo,
+        'skills':skillsToPrint
+    }
+    return render(request,"profile.html",{'context':context})
 
 
 def chatBox(request):
@@ -417,13 +434,68 @@ class AjaxAnsView(View):
 
 
         return render(request,"answers.html",{'context':context})
+    
+@login_required
+@csrf_exempt
+def postQuestion(request):
+    if request.method == "POST":
+        text = request.POST.get("userPost")
+        print(text)
+        try:
+            usr = User.objects.filter(username = request.user).first()
+            qtn = Questions(question = text, userWhoAsked = usr)
+            qtn.save()
+            return JsonResponse({"status":200})
+        except:
+            return JsonResponse({"status":500})
+    return render(request,"question.html")
+
+@csrf_exempt
+def save_comment(request,id):
+    getA = Answers.objects.filter(id=id)
+    commentList = Comments.objects.filter(commentToAnswer = getA[0])
+    print(commentList)
+    context = {
+        'ans':getA[0].answer,
+        'comments':commentList
+    }
+
+    if request.method == "POST":
+        text = request.POST.get("userPost")
+        print(text)
+
+        usr = User.objects.filter(username = request.user).first()
+        ans = Answers.objects.filter(id = id).first()
+        com = Comments(comment = text, commentToAnswer = ans, posSentiment=True, author = usr)
+        com.save()
+
+        # new way to unpack
+        comment = Comments.objects.filter(commentToAnswer = getA[0]).values()
+        commentList = list(comment)
+
+        context = {
+            'ans':getA[0].answer,
+            'comments':commentList
+        }
+
+        return JsonResponse({"context":context})
+    else:
+        getA = Answers.objects.filter(id=id)
+        comment = Comments.objects.filter(commentToAnswer = getA[0]).values()
+        commentList = list(comment)
+        context = {
+            'ans':getA[0].answer,
+            'comments':commentList
+        }
+        return render(request,'comments.html',{'context':context})
+
 
 class AjaxComView(View):
     def get(self,request,id):
         alert = "Offensive or inappropriate language used...cant post"
         allGood = "1"
         text = request.GET.get("userPost")
-        # if request.GET.get("isReply") == True:
+        print( request.GET.get("isReply"))
 
         status = checkProfanity(text)
 
@@ -431,7 +503,6 @@ class AjaxComView(View):
         if request.is_ajax():
             # check sentiment
             sentiment = True if TextBlob(text).sentiment.polarity >=0 else False
-            print(sentiment)
 
             if(status == True):
                 return JsonResponse({"Cuss":alert},status=200)
@@ -441,8 +512,11 @@ class AjaxComView(View):
                 try:
                     usr = User.objects.filter(username = request.user).first()
                     ans = Answers.objects.filter(id = id).first()
-                    com = Comments(comment = text, commentToAnswer = ans, posSentiment=sentiment, author = usr)
-                    com.save()
+                    # if request.GET.get("isReply") != "-1":
+                    #     com = Comments(comment = text, commentToAnswer = ans, posSentiment=sentiment, author = usr)
+                    # else:
+                    #     com = Comments(comment = text, replyTo=, commentToAnswer = ans, posSentiment=sentiment, author = usr)
+                    # com.save()
                     return JsonResponse({"Cuss":allGood},status=200)
                 except:
                     return JsonResponse({"Cuss":"couldnt upload"},status=200)

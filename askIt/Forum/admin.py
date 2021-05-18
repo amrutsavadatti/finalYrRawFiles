@@ -12,5 +12,6 @@ admin.site.register(Comments)
 admin.site.register(userResponses)
 admin.site.register(Skills)
 admin.site.register(userSkills)
+admin.site.register(Notifications)
 
 

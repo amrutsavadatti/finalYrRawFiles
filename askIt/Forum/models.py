@@ -79,9 +79,12 @@ class userSkills(models.Model):
     skill = models.ForeignKey(Skills,on_delete=models.CASCADE)
 
 class Notifications(models.Model):
-    question = models.TextField()
-    answer = models.TextField()
+    question = models.TextField(null=True,blank=True)
+    answer = models.TextField(null=True,blank=True)
     whoAsked = models.TextField()
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     is_seen =  models.BooleanField(default=False)
     datetime = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.question

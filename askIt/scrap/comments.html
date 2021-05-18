@@ -1,0 +1,134 @@
+{% extends 'home.html' %}
+
+{% block cssStatic %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#ifNotCuss").hide()
+            $("#sendToProfanityCheck").click(function(){
+                output = "";
+
+                $.ajax({
+                    url: $(location).attr("href"),
+                    type: "POST",
+                    data: {
+                        userPost : $("#myText").val(),
+                        
+                    },
+                    success: function(response){
+                        x = response.context.comments
+                        console.log(response.context.comments)
+                        $("#myText").text("");
+
+                        for(i=0; i<x.length; i++){
+                            output+= '<div class="border border-info rounded m-1 p-2 "> <p>' +
+                            x[i].comment +
+                            '</p> <p style="font-size:12px">' + 
+                            x[i].datetime+ 
+                            '</p> <p style="font-size:12px">'+ 
+                            x[i].author+
+                            '</p> </div>'
+                        }
+                        $("#getCom").html(output);
+                        
+                    }
+
+                });
+            });
+        });
+    </script>
+{% endblock cssStatic %}
+
+{% block post1 %}
+    <div class="col pt-2 mt-5" >
+            <div class="main shadow pb-2" style="background-color:white">
+
+                <ul class="nav nav-tabs" >
+                <li class="nav-item">
+                    <a class="nav-link" href="/postAlumni" style="color:#007bff">Alumni</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link " href="/postStack" style="color:#007bff">StackOverflow</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/askAlumni" style="color:#007bff">Ask Alumni</a>
+                </li>                          
+                </ul>
+
+
+                {% comment %} this is blogPost  {% endcomment %}
+
+                <div class="border  rounded m-1 p-2 " style="background-color:rgb(61, 104, 121)">
+                    <h3 style="color:white">{{context.ans}}</h3>
+                    <p style="font-size:12px;color:white">12/3/2021</p>
+                    <p style="font-size:12px;color:white">by person</p>
+
+                    <!-- Button trigger modal -->
+                    <a class="list-group-item list-group-item-action" data-toggle="modal" data-target="#postAns">
+                        <footer class="p-1" style="text-align:center">
+                            <b>Post Comment</b>
+                        </footer>
+                    </a>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="postAns" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalCenterTitle">Write your Answer</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            
+                                <div class="modal-body">
+                                    <textarea id="myText" class="form-control" aria-label="With textarea" placeholder="Post your Answer"></textarea>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <p id="ifCuss" style="color:red"></p>
+                                    <p id="ifNotCuss" style="color:green">Question Posted</p>
+                                    <button id="sendToProfanityCheck" type="button" class="btn btn-primary">Post</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>      
+                <div id="getCom">
+                    {% for j in context.comments %}
+                    
+                    <div class="border border-info rounded m-1 p-2 ">
+
+                        <p>
+                            {{j.comment}}
+                        </p>
+                        <p style="font-size:12px">{{j.datetime}}</p>
+                        <p style="font-size:12px">{{j.author}}</p>
+                        <div class="row mx-1">
+                            <div class="col-md-auto" style="background-color:white">
+                            <img src="{% static 'upvote.png' %}">
+                            <p style="font-size:12px;padding-left:35%">{{j.upVotes}}</p>
+                            </div>
+                            <div class="col-md-auto" style="background-color:white">
+                            <img src="{% static 'downvote.png' %}">
+                            <p style="font-size:12px;padding-left:35%">{{j.downVotes}}</p>
+                            </div>
+                                <div class="col-md-auto" style="background-color:white">
+                                <a href="/comments/{{j.id}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                    <img src="{% static 'comment.png' %}">
+                                </a>                                
+                            </div>                                
+                        </div>
+                    </div>                        
+                    {% endfor %}
+                </div>
+                                  
+            {% comment %} end main {% endcomment %}
+        </div> 
+        
+    </div>
+    
+
+{% endblock post1 %}
