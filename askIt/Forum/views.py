@@ -71,6 +71,60 @@ def tattiFun(request):
     print(request.user.first_name)
     return render(request,'tattiIdea.html')
 
+@csrf_exempt
+def AskAlumni(request):
+    if request.method == "POST":
+        alert = "Offensive or inappropriate language used...cant post"
+        allGood = "1"
+        text = request.POST["userPost"]
+        alumni = request.POST['alumniID']
+        status = checkProfanity(text)
+        if(status == True):
+            return JsonResponse({"Cuss":alert},status=200)
+        elif(text == ""):
+            return JsonResponse({"Cuss":"Blank Question cant be posted"},status=200)
+        else:
+            try:
+                usr = User.objects.filter(username = request.user).first()
+                qtn = Questions(question = text,userWhoAsked = usr)
+                qtn.save()
+                alumniUsrObj = User.objects.filter(id=alumni).first()
+                nfy = Notifications(question = text,whoAsked = request.user, user = alumniUsrObj, qID = qtn.id)
+                nfy.save()
+                return JsonResponse({"Cuss":allGood},status=200)
+            except:
+                return JsonResponse({"Cuss":"couldnt upload"},status=200)
+    try:
+        #gets related skills here
+        qtn = request.session["cachedQtn"]
+        # print(qtn)
+        ans=test(qtn)
+        # print(ans)
+
+        skillSet = [item.id for skill in ans for item in Skills.objects.filter(skill = skill)]
+        print(skillSet)
+        usersSet = set([user.user for skill in skillSet for user in  userSkills.objects.filter(skill = skill)])
+        print(usersSet)
+
+        userToPrint = [user for obj in usersSet for user in  UserInfo.objects.filter(user = obj, is_verified = True ,userType = "alumni",markSheet_verified = True)]
+        
+        alumniName = [f"{ppl.user.first_name} {ppl.user.last_name}" for ppl in userToPrint]
+        print(alumniName)
+        alumniEmail = [ppl.user.email for ppl in userToPrint]
+        img=[random.randint(1,3) for i in range(len(alumniName))]
+        alumniUsr = [a.user.id for a in userToPrint]
+        print(alumniUsr)
+
+
+        info = zip(alumniName,img,alumniEmail,alumniUsr)
+
+        # info = [(f"{ppl.user.first_name} {ppl.user.last_name}", ppl.user.email, random.randint(1, 3)) for ppl, in getUserInfo)]
+        
+        
+        return render(request,"askAlumni.html",{'info':info})
+    except:
+        return render(request,"askAlumni.html")
+
 
 class AjaxHandlerView(View):
     def get(self,request):
@@ -266,26 +320,33 @@ def alumni(request):
 @csrf_exempt
 def notify(request):
     if request.method == "POST":
-        if request.POST["notification"]:
+        if request.POST['notification']:
             id = request.POST["notification"]
             usr = User.objects.filter(username = request.user).first()
             notifications = Notifications.objects.filter(user = usr,id = id)
             notifications.delete()
 
             notify = Notifications.objects.filter(user = usr).values()
-            print(notify) 
+            print(notify)
             notification = list(notify)
-            print(notification)
+            
             return JsonResponse({"notify":notification},status=200)
-                
+
 
     usr = User.objects.filter(username = request.user).first()
-    notifications = Notifications.objects.filter(user = usr)
+    notificationsObj = Notifications.objects.filter(user = usr).values()
+    notifications = list(notificationsObj)
     print(usr)
     print(notifications)
     context={
         'notifications':notifications
     }
+    nty = Notifications.objects.filter(user = usr)
+    print(nty)
+    for i in nty:
+        i.is_seen = True
+        i.save()
+    
 
     return render(request,"notifications.html",{'context':context})
 

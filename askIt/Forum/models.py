@@ -85,6 +85,7 @@ class Notifications(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     is_seen =  models.BooleanField(default=False)
     datetime = models.DateTimeField(auto_now=True)
+    qID = models.IntegerField(null=True,blank=True)
 
     def __str__(self):
         return self.question
