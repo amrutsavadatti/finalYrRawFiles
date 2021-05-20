@@ -17,21 +17,22 @@
                 $("#ifCuss").hide();
 
             });
-            $("#sendToProfanityCheck").click(function(){
+            $("#sendToProfanityCheck").on('click',function(){
                     $.ajax({
                         url: $(location).attr("href"),
                         type: "get",
                         data: {
-                            userPost : $("#myTextR").val(),
-                            isReply: $(this).attr(id)
+                            userPost : $("#myText").val()
                         },
                         success: function(response){
+                            console.log(response.Cuss);
                             if (response.Cuss != "1"){
-                                $("#ifCussR").text(response.Cuss)
+                                $("#ifCuss").text(response.Cuss)
+                                $("#ifCuss").show();
                             }
                             else{
-                                $("#ifNotCussR").show();
-                                $("#ifCussR").hide();
+                                $("#ifNotCuss").show();
+                                $("#ifCuss").hide();
                                 
 
                             }

@@ -59,6 +59,11 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 
+def getScore(upVotes,downvotes,pos,neg):
+    x=float(((0.2*upVotes)+(0.8*pos))/d+n)
+    x=format(x,".4f")
+    return x
+
 
 def getSkills(request):
     ans=test("how to make lists using c++")
@@ -605,11 +610,10 @@ class AjaxComView(View):
         
         if not request.GET.get("isReply"):
             print("not reply")
-            text = request.GET.get("userPost")
-            status = checkProfanity(text)
-
-
             if request.is_ajax():
+                text = request.GET.get("userPost")
+                status = checkProfanity(text)
+                print("inajax")
                 # check sentiment
                 sentiment = True if TextBlob(text).sentiment.polarity >=0 else False
 
@@ -626,6 +630,7 @@ class AjaxComView(View):
                         return JsonResponse({"Cuss":allGood},status=200)
                     except:
                         return JsonResponse({"Cuss":"couldnt upload"},status=200)
+                        
         elif request.GET.get("isReply"):
             print("reply")
             text = request.GET.get("userPost")
