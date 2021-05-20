@@ -155,8 +155,7 @@ def login_attempt(request):
         if user_obj is None:
             messages.success(request, 'User not found.')
             return redirect('/accounts/login')
-        
-        
+               
         profile_obj = UserInfo.objects.filter(user = user_obj ).first()
 
         if not profile_obj.is_verified:
@@ -263,8 +262,23 @@ def alumni(request):
     info = zip(alumniName,img,alumniEmail)
     return render(request,"alumni.html",{'info':info})
 
-@login_required
+
+@csrf_exempt
 def notify(request):
+    if request.method == "POST":
+        if request.POST["notification"]:
+            id = request.POST["notification"]
+            usr = User.objects.filter(username = request.user).first()
+            notifications = Notifications.objects.filter(user = usr,id = id)
+            notifications.delete()
+
+            notify = Notifications.objects.filter(user = usr).values()
+            print(notify) 
+            notification = list(notify)
+            print(notification)
+            return JsonResponse({"notify":notification},status=200)
+                
+
     usr = User.objects.filter(username = request.user).first()
     notifications = Notifications.objects.filter(user = usr)
     print(usr)
@@ -274,6 +288,32 @@ def notify(request):
     }
 
     return render(request,"notifications.html",{'context':context})
+
+
+class AjaxNotifyView(View):
+    def get(self,request):
+        if request.GET.get("notification"):
+            id = request.GET.get("notification")
+            usr = User.objects.filter(username = request.user).first()
+            notifications = Notifications.objects.filter(user = usr,id = id)
+            notifications.delete()
+
+            if request.is_ajax():
+                notify = Notifications.objects.filter(user = usr,id = id).values()
+
+                notification = list(notify)
+                print("#" + notification)
+                return JsonResponse({"notify":notification},status=200)
+
+        usr = User.objects.filter(username = request.user).first()
+        notifications = Notifications.objects.filter(user = usr)
+        print(usr)
+        print(notifications)
+        context={
+            'notifications':notifications
+        }
+
+        return render(request,"notifications.html",{'context':context})
 
 def Register1(request):
     return render(request,"register1.html")
@@ -393,6 +433,7 @@ class AjaxAnsView(View):
     def get(self,request,id):
         alert = "Offensive or inappropriate language used...cant post"
         allGood = "1"
+        # if request.GET.get("userPost") :
         text = request.GET.get("userPost")
         status = checkProfanity(text)
         if request.is_ajax():
@@ -410,6 +451,12 @@ class AjaxAnsView(View):
                     return JsonResponse({"Cuss":allGood},status=200)
                 except:
                     return JsonResponse({"Cuss":"couldnt upload"},status=200)
+        # elif request.GET.get("ansUp"):
+        #     id = request.GET.get("ansUp")
+        #     if request.is_ajax():
+        #         ans = Answers.objects.filter(id = id).first()
+        #         ans.upVotes += 1 
+
         
         getQ = Questions.objects.filter(id=id)
         ansList=[ans.answer for ans in Answers.objects.filter(ansTo=getQ[0])]
@@ -494,39 +541,63 @@ class AjaxComView(View):
     def get(self,request,id):
         alert = "Offensive or inappropriate language used...cant post"
         allGood = "1"
-        text = request.GET.get("userPost")
-        print( request.GET.get("isReply"))
+        
+        if not request.GET.get("isReply"):
+            print("not reply")
+            text = request.GET.get("userPost")
+            status = checkProfanity(text)
 
-        status = checkProfanity(text)
 
+            if request.is_ajax():
+                # check sentiment
+                sentiment = True if TextBlob(text).sentiment.polarity >=0 else False
 
-        if request.is_ajax():
-            # check sentiment
-            sentiment = True if TextBlob(text).sentiment.polarity >=0 else False
+                if(status == True):
+                    return JsonResponse({"Cuss":alert},status=200)
+                elif(text == ""):
+                    return JsonResponse({"Cuss":"Blank Question cant be posted"},status=200)
+                else:
+                    try:
+                        usr = User.objects.filter(username = request.user).first()
+                        ans = Answers.objects.filter(id = id).first()
+                        com = Comments(comment = text, commentToAnswer = ans, posSentiment = sentiment, author = usr)
+                        com.save()
+                        return JsonResponse({"Cuss":allGood},status=200)
+                    except:
+                        return JsonResponse({"Cuss":"couldnt upload"},status=200)
+        elif request.GET.get("isReply"):
+            print("reply")
+            text = request.GET.get("userPost")
+            print(text)
+            reply = request.GET.get("isReply")
+            print(reply)
+            status = checkProfanity(text)
 
-            if(status == True):
-                return JsonResponse({"Cuss":alert},status=200)
-            elif(text == ""):
-                return JsonResponse({"Cuss":"Blank Question cant be posted"},status=200)
-            else:
-                try:
-                    usr = User.objects.filter(username = request.user).first()
-                    ans = Answers.objects.filter(id = id).first()
-                    # if request.GET.get("isReply") != "-1":
-                    #     com = Comments(comment = text, commentToAnswer = ans, posSentiment=sentiment, author = usr)
-                    # else:
-                    #     com = Comments(comment = text, replyTo=, commentToAnswer = ans, posSentiment=sentiment, author = usr)
-                    # com.save()
-                    return JsonResponse({"Cuss":allGood},status=200)
-                except:
-                    return JsonResponse({"Cuss":"couldnt upload"},status=200)
+            if request.is_ajax():
+                # check sentiment
+                sentiment = True if TextBlob(text).sentiment.polarity >=0 else False
+
+                if(status == True):
+                    return JsonResponse({"Cuss":alert},status=200)
+                elif(text == ""):
+                    return JsonResponse({"Cuss":"Blank Question cant be posted"},status=200)
+                else:
+                    try:
+                        usr = User.objects.filter(username = request.user).first()
+                        ans = Answers.objects.filter(id = id).first()
+                        com = Comments(replyTo = reply ,comment = text, commentToAnswer = ans, posSentiment = sentiment, author = usr)
+                        com.save()
+                        return JsonResponse({"Cuss":allGood},status=200)
+                    except:
+                        return JsonResponse({"Cuss":"couldnt upload"},status=200)
+
 
 
         getA = Answers.objects.filter(id=id)
         commentList = Comments.objects.filter(commentToAnswer = getA[0])
         print(commentList)
         context = {
-            'ans':getA[0].answer,
+            'ans':getA[0],
             'comments':commentList
         }
         return render(request,'comments.html',{'context':context})

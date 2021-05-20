@@ -24,7 +24,7 @@ def search_query(query,number_result):
     desc=[inf.getText() for inf in text if inf != None]
     output=[]
     
-    for i in range(0,number_result):
+    for i in range(0,len(title)):
 
         item = {
             'title': title[i],

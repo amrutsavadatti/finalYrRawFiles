@@ -6,37 +6,24 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function(){
-        $("#ifNotCuss").hide()
-        $("#sendToProfanityCheck").click(function(){
-                $.ajax({
-                    url: $(location).attr("href"),
-                    type: "get",
-                    data: {
-                        userPost : $("#myText").val(),
-                        isReply: "-1"
-                    },
-                    success: function(response){
-                        if (response.Cuss != "1"){
-                            $("#ifCuss").text(response.Cuss)
-                        }
-                        else{
-                            $("#ifNotCuss").show();
-                            $("#ifCuss").hide();
-                            
-
-                        }
-                    }
-
-                });
+            $("#ifNotCussR").hide();
+            $("#ifCussR").hide();
+            $("#ifNotCuss").hide();
+            $("#ifCuss").hide();
+            $(".get-modal").click(function(){
+                $("#ifNotCussR").hide();
+                $("#ifCussR").hide();
+                $("#ifNotCuss").hide();
+                $("#ifCuss").hide();
 
             });
-            $("#ifNotCussR").hide()
-            $("#sendToProfanityCheckR").click(function(){
+            $("#sendToProfanityCheck").click(function(){
                     $.ajax({
                         url: $(location).attr("href"),
                         type: "get",
                         data: {
                             userPost : $("#myTextR").val(),
+                            isReply: $(this).attr(id)
                         },
                         success: function(response){
                             if (response.Cuss != "1"){
@@ -53,6 +40,34 @@
                     });
 
                 });
+
+            $(".reply-click").on('click',function(){
+                var commentid = $(this).data('answer');
+                console.log(commentid);
+                $("#sendToProfanityCheckR").click(function(){
+                    $.ajax({
+                        url: $(location).attr("href"),
+                        type: "get",
+                        data: {
+                            userPost : $("#myTextR").val(),
+                            isReply : commentid
+                        },
+                        success: function(response){
+                            if (response.Cuss != "1"){
+                                $("#ifCussR").text(response.Cuss)
+                            }
+                            else{
+                                $("#ifNotCussR").show();
+                                $("#ifCussR").hide();
+                                
+
+                            }
+                        }
+
+                    });
+
+                });
+            });
         
         });
     </script>
@@ -79,11 +94,11 @@
                         {% comment %} this is blogPost  {% endcomment %}
 
                         <div class="border  rounded m-1 p-2 " style="background-color:rgb(61, 104, 121)">
-                            <h3 style="color:white">{{context.ans}}</h3>
-                            <p style="font-size:12px;color:white">12/3/2021</p>
-                            <p style="font-size:12px;color:white">by person</p>
+                            <h3 style="color:white">{{context.ans.answer}}</h3>
+                            <p style="font-size:12px;color:white">{{context.ans.datetime}}</p>
+                            <p style="font-size:12px;color:white">{{context.ans.author}}</p>
                             <!-- Button trigger modal -->
-                            <a href="#" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#postComment">
+                            <a href="#" class="list-group-item list-group-item-action get-modal" data-toggle="modal" data-target="#postComment">
                                 <footer class="p-1" style="text-align:center">
                                     <b>Post Comment</b>
                                 </footer>
@@ -106,7 +121,7 @@
 
                                         <div class="modal-footer">
                                             <p id="ifCuss" style="color:red"></p>
-                                            <p id="ifNotCuss" style="color:green">Question Posted</p>
+                                            <p id="ifNotCuss" style="color:green">Comment Posted</p>
                                             <button id="sendToProfanityCheck" type="button" class="btn btn-primary">Post</button>
                                         </div>
                                     </div>
@@ -116,9 +131,19 @@
 
                         {% for j in context.comments %}
                         <div class="border border-info rounded m-1 p-2 ">
-                            <p>
-                                {{j.comment}}
-                            </p>
+                            {% if j.replyTo %}
+                                <div class="rounded m-1 p-2 " style="background-color:#d4d6d5">
+                                    {{j.replyTo}}
+                                </div>
+                                <p>
+                                    {{j.comment}}
+                                </p>
+                            {% else %}
+                                <p>
+                                    {{j.comment}}
+                                </p>
+                            {% endif %}
+                            
                             <p style="font-size:12px">{{j.datetime}}</p>
                             <p style="font-size:12px">{{j.author}}</p>
                             <div class="row mx-1">
@@ -133,7 +158,7 @@
                                 <div class="col-md-auto" style="background-color:white">
 
                                 <!-- Button trigger modal -->
-                                    <a data-toggle="modal" data-target="#replyModal{{j.id}}"  aria-expanded="false" aria-controls="collapseExample">
+                                    <a class=" reply-click " data-answer="{{j.comment}}" data-toggle="modal" data-target="#replyModal{{j.id}}"  aria-expanded="false" aria-controls="collapseExample">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" class="feather feather-reply-fill iconClass" viewBox="0 0 16 16">
                                         <path d="M5.921 11.9 1.353 8.62a.719.719 0 0 1 0-1.238L5.921 4.1A.716.716 0 0 1 7 4.719V6c1.5 0 6 0 7 8-2.5-4.5-7-4-7-4v1.281c0 .56-.606.898-1.079.62z"/>
                                         </svg>
@@ -141,7 +166,7 @@
                                     </a>
 
                                 <!-- Modal -->
-                                    <div class="modal fade" id="replyModal{{j.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                    <div  class="modal fade" id="replyModal{{j.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -157,7 +182,7 @@
 
                                                 <div class="modal-footer">
                                                     <p id="ifCussR" style="color:red"></p>
-                                                    <p id="ifNotCussR" style="color:green">Question Posted</p>
+                                                    <p id="ifNotCussR" style="color:green">Reply Posted</p>
                                                     <button id="sendToProfanityCheckR" type="button" class="btn btn-primary">Post</button>
                                                 </div>
                                             </div>
