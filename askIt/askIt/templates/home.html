@@ -26,7 +26,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="feather bi-bell" viewBox="0 0 16 16" stroke-width="2">
                                 <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
                             </svg>
-                            Notifications <span class="badge bg-info text-light">7</span>
+                            Notifications 
                             </a>
                         </li>                        
                         <li class="nav-item">
@@ -41,7 +41,7 @@
                             Alumni
                             </a>
                         </li>
-                        <li class="nav-item">
+                        {% comment %} <li class="nav-item">
                             <a class="nav-link" href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="feather bi-gear" viewBox="0 0 16 16" stroke-width="2">
                                 <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
@@ -49,7 +49,7 @@
                             </svg>
                             Settings
                             </a>
-                        </li>
+                        </li> {% endcomment %}
                         <li class="nav-item">
                             <a class="nav-link" href="/postQuestion">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="feather bi-patch-question" viewBox="0 0 16 16">
@@ -60,7 +60,18 @@
                             Ask Question
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="modal" data-target="#exampleModalCenter">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="feather bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                            </svg>
+                            Search Questions
+                            </a>
+                        </li>
                         </ul>
+
+                        
+
 
                         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                         <span>Recent Chats</span>
@@ -92,7 +103,34 @@
 
             {% block post1 %}
             
+            
             {% endblock post1 %}
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Search for new Questions </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="/searchQuestion">
+                        {% csrf_token %}
+                            <div class="col mb-3">
+                                <input type="text" class="form-control" name="sq" id="srch" placeholder="Search" >
+                            </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
 
 
             <div class="col col-md-2">

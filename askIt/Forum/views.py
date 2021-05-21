@@ -202,6 +202,29 @@ class PublisherDocumentView(DocumentViewSet):
         'id': None,
     }
     ordering = ( 'id')
+
+
+class QuestionDocumentView(DocumentViewSet):
+    
+    document = QuestionDocument
+    serializer_class = QuestionDocumentSerializer
+
+    filter_backends = [
+        FilteringFilterBackend,
+        CompoundSearchFilterBackend,
+        OrderingFilterBackend,
+    ]
+
+    search_fields = ('question','id','userWhoAsked','userWhoAsked__username')
+    multi_match_search_fields = ('question','id','userWhoAsked','userWhoAsked__username')
+    filter_fields = {
+        'question':'question',
+        'userWhoAsked':'userWhoAsked'
+    }
+    ordering_fields = {
+        'question': None,
+    }
+    ordering = ( 'question')
     
         
 
@@ -488,6 +511,20 @@ def profile(request):
     }
     return render(request,"profile.html",{'context':context})
 
+@login_required
+def profileAlumni(request,id):
+    usr = User.objects.filter(id = id).first()
+    usrInfo = UserInfo.objects.filter(user = usr).first()
+    skillsToPrint = [skill.skill.skill for skill in  userSkills.objects.filter(user = usr)]
+    print(skillsToPrint)
+    context={
+        'user':usr,
+        'uInfo':usrInfo,
+        'skills':skillsToPrint
+    }
+    return render(request,"profile.html",{'context':context})
+
+
 
 def chatBox(request):
     return render(request,"chat.html")
@@ -563,6 +600,15 @@ def postQuestion(request):
             return JsonResponse({"status":500})
     return render(request,"question.html")
 
+def searchQuestion(request):
+    if request.method == "POST" and request.POST.get("sq")!=None:
+        base = "http://127.0.0.1:8000/searchQ/?search="
+        sQuery = request.POST.get("sq")
+        op = requests.get(base+sQuery).json()
+        print(op)
+    return HttpResponse('abc')
+
+
 @csrf_exempt
 def save_comment(request,id):
     getA = Answers.objects.filter(id=id)
@@ -630,7 +676,7 @@ class AjaxComView(View):
                         return JsonResponse({"Cuss":allGood},status=200)
                     except:
                         return JsonResponse({"Cuss":"couldnt upload"},status=200)
-                        
+                                        
         elif request.GET.get("isReply"):
             print("reply")
             text = request.GET.get("userPost")

@@ -76,7 +76,11 @@
 					{% for i,j,k,l in info %}
 					<tr>
 						<td><img src="https://bootdey.com/img/Content/avatar/avatar{{j}}.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-						<td>{{i}}</td>
+						<td>
+							<a href="/profile/{{l}}">
+								{{i}}
+							</a>
+						</td>
 						<td>{{k}}</td>
 						<td>
 							<!-- Button trigger modal -->

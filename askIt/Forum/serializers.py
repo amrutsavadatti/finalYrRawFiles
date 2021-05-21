@@ -22,5 +22,23 @@ class AnsDocumentSerializer(DocumentSerializer):
             except:
                 return{}
 
+class QuestionDocumentSerializer(DocumentSerializer):
+    class Meta:
+        model = Questions
+        document = QuestionDocument
+
+        fields = (
+            'id',
+            'question',
+            'userWhoAskeds'
+            
+            )
+
+        def get_location(self, obj):
+            try:
+                return obj.location.to_dict()
+            except:
+                return{}
+
 
 
