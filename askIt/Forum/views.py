@@ -6,7 +6,7 @@ from textblob import TextBlob
 from django.views.generic import View
 from django.http import JsonResponse
 import hashlib
-import pyrebase
+#import pyrebase
 import random
 
 import csv
@@ -55,7 +55,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 
 from .w2v import *
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
 
 
@@ -72,7 +72,7 @@ def getSkills(request):
 
 
 def tattiFun(request):
-    usr = request.user#gives username
+    usr = request.user #gives username
     print(request.user.first_name)
     return render(request,'tattiIdea.html')
 
@@ -227,7 +227,6 @@ class QuestionDocumentView(DocumentViewSet):
     ordering = ( 'question')
     
         
-
 def login_attempt(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -437,6 +436,7 @@ def Register2(request):
                 messages.success(request, 'Email is taken.')
                 return redirect('/register1')
 
+
             user_obj = User(username = userName , email = email, first_name = fName, last_name = lName)
             user_obj.set_password(password)
             user_obj.save()
@@ -503,11 +503,13 @@ def profile(request):
     usr = User.objects.filter(username = request.user).first()
     usrInfo = UserInfo.objects.filter(user = usr).first()
     skillsToPrint = [skill.skill.skill for skill in  userSkills.objects.filter(user = usr)]
+    userProfile=[data for data in userprofile.objects.filter(author=usr)]
     print(skillsToPrint)
     context={
         'user':usr,
         'uInfo':usrInfo,
-        'skills':skillsToPrint
+        'skills':skillsToPrint,
+        'userProfile':userProfile
     }
     return render(request,"profile.html",{'context':context})
 
@@ -722,7 +724,7 @@ def runCheck(request):
     uploaded_file = 0
     if request.method == "POST":
 
-        base_dir = "C:/Users/Amrut/Desktop/askIt2021/finalYrRawFiles/askIt/askIt/media"
+        base_dir = "C:/Users/Chelamallu/Desktop/askIt2021/finalYrRawFiles/askIt/askIt/media"
         for f in os.listdir(base_dir):
             os.remove(os.path.join(base_dir, f))
 
@@ -732,7 +734,7 @@ def runCheck(request):
     else:
         return render(request,"register3.html")
     if(uploaded_file != 0):
-        base_dir = "C:/Users/Amrut/Desktop/askIt2021/finalYrRawFiles/askIt/askIt/media"
+        base_dir = "C:/Users/Chelamallu/Desktop/askIt2021/finalYrRawFiles/askIt/askIt/media"
         fileList = os.listdir(base_dir)
         print(fileList)
         image = os.path.join(base_dir,fileList[0])
@@ -758,6 +760,19 @@ def runCheck(request):
             return render(request,"register3.html",{"err":"Uploaded document does not appear to be SFIT Marksheet"})
 
 
+
+def autocomplete(request):
+    #s=request.GET.get()
+    qs=Skills.objects.all()
+    return render (request,'register2.html',{"autocomplete":qs})
+    #if 'term' in request.GET:
+     #   qs=Skills.objects.filter(skill_istartswith=request.GET.get('term'))
+      #  skills1 = list()
+        #for skillfor in qs:
+       #     skills1.append(skillfor.skill)
+        # titles = [product.title for product in qs]
+        #return JsonResponse(skills1, safe=False)
+    #return render(request, 'register2.html')
     # ans = execute()
     # print(ans)
     # return HttpResponse("DOne")
@@ -766,10 +781,10 @@ def runCheck(request):
 ############################################
 
 # TO POPULATE QnA
-
+"""
 def populateDb(request):
     # try:
-    with open('C:/Users/Amrut/Desktop/askIt2021/finalYrRawFiles/askIt/scrap/comments2.csv', newline='') as f:
+    with open('C:/Users/Chelamallu/Desktop/askIt2021/finalYrRawFiles/askIt/scrap/comments2.csv', newline='') as f:
         reader = csv.reader(f)
         data = list(reader)
 
@@ -796,6 +811,56 @@ def populateDb(request):
     return HttpResponse("status:200")
     # except:
     #     return HttpResponse("Error")
+
+"""
+#TO POPULATE SKILLS
+
+def populateDb(request):
+    try:
+        with open('C:/Users/Chelamallu/Desktop/New folder/finalYrRawFiles-branch_Amrut/askIt/Forum/skills_main.csv', newline='',encoding="utf-8") as f:  
+            reader = csv.reader(f)
+            data = list(reader)
+            print(len(data))
+        for j in range(0,89688):
+            if (data[2][j]!='c++' and data[2][j]!='python' and data[2][j]!='mysql' and data[2][j]!='php' and data[2][j]!='unit test' and data[2][j]!='elasticsearch' and data[2][j]!='html' and data[2][j]!='css' and data[2][j]!='java'):
+                skilla = data[2][j]
+                print(skilla)
+
+            pd=Skills(skill=skilla)
+
+            pd.save()
+        return HttpResponse("status:200")
+    except:
+        return HttpResponse("Error")
+
+ #TO POPULATE USERPROFILE (MASTERS)
+"""def populateDb(request):
+    try:
+        with open('C:/Users/Chelamallu/Desktop/askIt2021/finalYrRawFiles/askIt/scrap/UserProfile.csv', newline='') as f:
+            reader = csv.reader(f)
+            data = list(reader)
+
+        for j in range(2,len(data)):
+            user = data[j][0]
+            yofp = data[j][1]
+            mcourse =data[j][2] 
+            muniersity = data[j][3]
+            company = data[j][4]
+            
+            putData = User.objects.filter(email = user)
+            print(user)
+            #putA = Answers.objects.filter(answer = cTo)
+            pd = UserProfile(yofp=yofp,user=putData[0],mcourse = mcourse,muniersity=muniersity,company=company)
+            pd.save()
+        
+
+        return HttpResponse("status:200")
+    except:
+        return HttpResponse("Error") """
+
+
+
+
 
 
 # #TO POPULATE USERS

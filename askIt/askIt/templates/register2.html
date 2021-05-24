@@ -1,9 +1,11 @@
 {% extends 'boilerplate.html' %}
 {% block cssStatic %}
     {% load static %}
+
     <link rel="stylesheet" href="{% static 'register.css' %}">
 {% endblock cssStatic %}
 {% block boilerBody %}
+
 
 
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
@@ -13,10 +15,11 @@
 <div class="container">
   <div class="title">Experience</div>
   <br>
+  <form>
             <div class="user-details">
               <div class="input-box">
                 <span class="details">Skills</span>
-                <input type="text" name="skills" placeholder="Eg. python, Django, React, C++..." required>
+                <input type="text" id="skills" name="skills" placeholder="Eg. python, Django, React, C++..." required>
               </div>
               <div class="input-box">
                 <span class="details">Current Company</span>
@@ -50,6 +53,19 @@
             </div>
     </form>
 </div>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+    $( function() {
+      $("#skills").autocomplete({
+        source:"{% url 'autocomplete' %}",
+        minLength:2
+            });
+    });
+
+</script>
 {% endblock boilerBody %}
   
   

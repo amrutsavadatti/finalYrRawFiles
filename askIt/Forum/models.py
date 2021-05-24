@@ -89,3 +89,14 @@ class Notifications(models.Model):
 
     def __str__(self):
         return self.question
+
+class userprofile(models.Model):
+    author = models.ForeignKey(User,on_delete=models.CASCADE)
+    yofp=models.IntegerField()
+    mcourse=models.TextField(null=True)
+    muniersity=models.TextField(null=True)
+    company=models.TextField(null=True)
+
+    def _str_(self):
+        return self.author.username
+ 

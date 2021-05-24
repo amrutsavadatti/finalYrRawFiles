@@ -8,9 +8,10 @@ from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path("", views.display, name = "displayPage"),
-    # path("login", login_attempt, name = "Login"),
+    #path("login", login_attempt, name = "Login"),
     path("register1", views.Register1, name = "Register1"),
     path("register2", views.Register2, name = "Register2"),
+    #path('ajax/register4/', views.autocomplete, name='autocomplete'),
     path("register3", views.runCheck, name = "runCheck"),
     path('token' , token_send , name="token_send"),
     path('verify/<auth_token>' , verify , name="verify"),
@@ -31,14 +32,15 @@ urlpatterns = [
     path("postQuestion", views.postQuestion, name = "q"),
     path("searchQuestion", views.searchQuestion, name = "sq"),
     path("abc", views.abc, name = "abc"),
-    path("pop", views.populateDb, name = "pop"),
+    #path("pop", views.populateDb, name = "pop"),
     path("logOut", views.LogOut, name = "LogOut"),
     path("search/", PublisherDocumentView.as_view({'get' : 'list'})),
     path("searchQ/", QuestionDocumentView.as_view({'get' : 'list'})),
-    path("tatti", tattiFun, name = "poop"),
+    #path("tatti", tattiFun, name = "poop"),
     path("notifications", notify, name = "notify"),
     path("s", getSkills, name = "gs"),
     path("getIn", getIn, name = "getIn"),
+
 ]
 
 # urlpatterns = [

@@ -13,5 +13,5 @@ admin.site.register(userResponses)
 admin.site.register(Skills)
 admin.site.register(userSkills)
 admin.site.register(Notifications)
-
+admin.site.register(userprofile)
 

@@ -8,17 +8,22 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
-		$(document).ready(function(){
-      var str2 = "student";
-      var str1;
-      if ($("#userType").val()=="student"){
-        str1 = $("#emailType").val();
-        if(str1.indexOf(str2) == -1){
-            $("#alert").text("pls enter sfit email id")
-        }
+  $(document).on('submit','#registration_page',function(){
+    var str2 = "student.sfit.ac.in";
+    var str1;
+    if ($("#userType").val()=="student"){
+      str1 = $("#emailType").val();
+      if(str1.indexOf(str2) == -1){
+          $("#alert").text("pls enter sfit email id")
+          
+          return redirect('/register1')
       }
-		});
-	</script>
+      else{
+        return redirect('/register2')
+      }
+    }
+  });
+</script>
 
 
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
@@ -27,7 +32,7 @@
 
 <div class="container">
   <div class="title">Registration</div>
-  <form action="register2" method="POST">
+  <form action="register2" method="POST" id="registration_page">
   {% csrf_token %}
   <div class="row">
               <div class = "col mt-5" > 
