@@ -440,6 +440,7 @@ def Register2(request):
             user_obj = User(username = userName , email = email, first_name = fName, last_name = lName)
             user_obj.set_password(password)
             user_obj.save()
+            request.session['regUser']=user_obj.id
 
             auth_token = str(uuid.uuid4())
             info_obj = UserInfo.objects.create(user=user_obj,phoneNo=phoneNumber,userType=userType,auth_token=auth_token)
@@ -503,8 +504,10 @@ def profile(request):
     usr = User.objects.filter(username = request.user).first()
     usrInfo = UserInfo.objects.filter(user = usr).first()
     skillsToPrint = [skill.skill.skill for skill in  userSkills.objects.filter(user = usr)]
-    userProfile=[data for data in userprofile.objects.filter(author=usr)]
+    userProfile=userprofile.objects.filter(author=usr).first()
+    print(usrInfo)
     print(skillsToPrint)
+    print(userProfile)
     context={
         'user':usr,
         'uInfo':usrInfo,
@@ -759,19 +762,47 @@ def runCheck(request):
         else:
             return render(request,"register3.html",{"err":"Uploaded document does not appear to be SFIT Marksheet"})
 
+@csrf_exempt
+def skillPage(request):
+    skill=[]
+    if request.method =="POST":
+        if request.POST.get('skillslist',False):
+            skill.append(request.POST["skillslist"])
+            print(skill)
+        else:
+            usr=User.objects.filter(id=request.session['regUser'])
+            CurrComp = request.POST.get("CurrComp")
+            year_of_passing = request.POST.get("YoG")
+            mcourse = request.POST.get("course")
+            uni = request.POST.get("university")
 
+            Info=userprofile(author=usr,yofp=year_of_passing,mcourse=mcourse,muniversity=uni,company=CurrComp)
+            Info.save()
+
+            allskills=[item.id for x in skill for item in Skills.objects.filter(skill = x)]
+            print(allskills)
+            for i in allskills:
+                usk=userSkills(user=usr,skill=i)
+                usk.save()
+       
+    return render(request,"register3.html")
 
 def autocomplete(request):
+    skill= request.GET.get("skill")
+    payload=[]
+
+
     #s=request.GET.get()
-    qs=Skills.objects.all()
-    return render (request,'register2.html',{"autocomplete":qs})
-    #if 'term' in request.GET:
-     #   qs=Skills.objects.filter(skill_istartswith=request.GET.get('term'))
+    #qs=Skills.objects.all()
+    #return render (request,'register2.html',{"autocomplete":qs})
+    if skill:
+        qs=Skills.objects.filter(skill__icontains=skill)
       #  skills1 = list()
-        #for skillfor in qs:
-       #     skills1.append(skillfor.skill)
+        for ski in qs:
+            payload.append(ski.skill)
         # titles = [product.title for product in qs]
-        #return JsonResponse(skills1, safe=False)
+    return JsonResponse({'status':200, 'data':payload})
+    
     #return render(request, 'register2.html')
     # ans = execute()
     # print(ans)

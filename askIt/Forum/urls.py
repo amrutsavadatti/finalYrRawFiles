@@ -11,7 +11,7 @@ urlpatterns = [
     #path("login", login_attempt, name = "Login"),
     path("register1", views.Register1, name = "Register1"),
     path("register2", views.Register2, name = "Register2"),
-    #path('ajax/register4/', views.autocomplete, name='autocomplete'),
+    path('search/', views.autocomplete, name='autocomplete'),
     path("register3", views.runCheck, name = "runCheck"),
     path('token' , token_send , name="token_send"),
     path('verify/<auth_token>' , verify , name="verify"),
@@ -40,6 +40,7 @@ urlpatterns = [
     path("notifications", notify, name = "notify"),
     path("s", getSkills, name = "gs"),
     path("getIn", getIn, name = "getIn"),
+    path("reg2",skillPage,name="skillPage"),
 
 ]
 
