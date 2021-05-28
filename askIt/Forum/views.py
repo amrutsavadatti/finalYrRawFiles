@@ -60,9 +60,34 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
 
 def getScore(upVotes,downvotes,pos,neg):
-    x=float(((0.2*upVotes)+(0.8*pos))/d+n)
+    x=float(((0.2*upVotes)+(0.8*pos))-(downvotes+neg))
     x=format(x,".4f")
+    print(x)
     return x
+
+def computeScore(text,id):
+    if text=="comment":
+        com=Comments.objects.filter(id=id).first()
+        ans=com.commentToAnswer
+        
+    elif text=="u" or text=="d":
+        ans=Answers.objects.filter(id=id).first()
+        if text=="u":
+            ans.upVotes+=1
+        else:
+            ans.downVotes+=1
+        ans.save()
+
+
+    upvotes=ans.upVotes
+    downvotes=ans.downVotes
+    negCom=Comments.objects.filter(commentToAnswer=ans,posSentiment=False).count()
+    posCom=Comments.objects.filter(commentToAnswer=ans,posSentiment=True).count()
+    score=getScore(upvotes,downvotes,posCom,negCom)
+    ans.score=score
+    ans.save()
+    print(score)
+    return
 
 
 def getSkills(request):
@@ -331,17 +356,69 @@ def takeToHome(request):
 
 @login_required
 def alumni(request):
-    try:
-        getUserInfo = UserInfo.objects.filter(is_verified = True ,userType = "alumni")
-    except:
-        return HttpResponse("Couldnt fetch Data")
 
-    alumniName = [f"{ppl.user.first_name} {ppl.user.last_name}" for ppl in getUserInfo]
-    alumniEmail = [ppl.user.email for ppl in getUserInfo]
-    img=[random.randint(1,3) for i in range(len(alumniName))]
+    if request.method == "POST":
+        if request.is_ajax():
+            alert = "Offensive or inappropriate language used...cant post"
+            allGood = "1"
+            text = request.POST["userPost"]
+            alumni = request.POST['alumniID']
+            status = checkProfanity(text)
+            if(status == True):
+                return JsonResponse({"Cuss":alert},status=200)
+            elif(text == ""):
+                return JsonResponse({"Cuss":"Blank Question cant be posted"},status=200)
+            else:
+                try:
+                    usr = User.objects.filter(username = request.user).first()
+                    qtn = Questions(question = text,userWhoAsked = usr)
+                    qtn.save()
+                    alumniUsrObj = User.objects.filter(id=alumni).first()
+                    nfy = Notifications(question = text,whoAsked = request.user, user = alumniUsrObj, qID = qtn.id)
+                    nfy.save()
+                    return JsonResponse({"Cuss":allGood},status=200)
+                except:
+                    return JsonResponse({"Cuss":"couldnt upload"},status=200)
 
-    info = zip(alumniName,img,alumniEmail)
-    return render(request,"alumni.html",{'info':info})
+        txt = request.POST["skillSearchInput"]
+        try:
+            ans=test(txt)
+            print(ans)
+
+            skillSet = [item.id for skill in ans for item in Skills.objects.filter(skill = skill)]
+            print(skillSet)
+            usersSet = set([user.user for skill in skillSet for user in  userSkills.objects.filter(skill = skill)])
+            print(usersSet)
+
+            userToPrint = [user for obj in usersSet for user in  UserInfo.objects.filter(user = obj, is_verified = True ,userType = "alumni",markSheet_verified = True)]
+            
+            alumniName = [f"{ppl.user.first_name} {ppl.user.last_name}" for ppl in userToPrint]
+            print(alumniName)
+            alumniEmail = [ppl.user.email for ppl in userToPrint]
+            img=[random.randint(1,3) for i in range(len(alumniName))]
+            alumniUsr = [a.user.id for a in userToPrint]
+            print(alumniUsr)
+
+
+            info = zip(alumniName,img,alumniEmail,alumniUsr)
+            
+            return render(request,"alumni.html",{'info':info})
+        except:
+            return render(request,"alumni.html")
+    else:
+        return render(request,"alumni.html")
+
+    # try:
+    #     getUserInfo = UserInfo.objects.filter(is_verified = True ,userType = "alumni")
+    # except:
+    #     return HttpResponse("Couldnt fetch Data")
+
+    # alumniName = [f"{ppl.user.first_name} {ppl.user.last_name}" for ppl in getUserInfo]
+    # alumniEmail = [ppl.user.email for ppl in getUserInfo]
+    # img=[random.randint(1,3) for i in range(len(alumniName))]
+
+    # info = zip(alumniName,img,alumniEmail)
+    # return render(request,"alumni.html",{'info':info})
 
 
 @csrf_exempt
@@ -353,7 +430,7 @@ def notify(request):
             notifications = Notifications.objects.filter(user = usr,id = id)
             notifications.delete()
 
-            notify = Notifications.objects.filter(user = usr).values()
+            notify = Notifications.objects.filter(user = usr).order_by('-datetime').values()
             print(notify)
             notification = list(notify)
             
@@ -440,6 +517,7 @@ def Register2(request):
             user_obj = User(username = userName , email = email, first_name = fName, last_name = lName)
             user_obj.set_password(password)
             user_obj.save()
+            request.session['regUser']=user_obj.id
 
             auth_token = str(uuid.uuid4())
             info_obj = UserInfo.objects.create(user=user_obj,phoneNo=phoneNumber,userType=userType,auth_token=auth_token)
@@ -447,6 +525,7 @@ def Register2(request):
 
             send_mail_after_registration(email , auth_token)
             request.session['uName'] = user_obj.username
+            request.session['saved']=[]
             return redirect('/token')
 
         except Exception as e:
@@ -503,13 +582,16 @@ def profile(request):
     usr = User.objects.filter(username = request.user).first()
     usrInfo = UserInfo.objects.filter(user = usr).first()
     skillsToPrint = [skill.skill.skill for skill in  userSkills.objects.filter(user = usr)]
-    userProfile=[data for data in userprofile.objects.filter(author=usr)]
+    userProfile=userprofile.objects.filter(author=usr).first()
+    userAns = Answers.objects.filter(author = usr)
+    print(userAns)
     print(skillsToPrint)
     context={
         'user':usr,
         'uInfo':usrInfo,
         'skills':skillsToPrint,
-        'userProfile':userProfile
+        'userProfile':userProfile,
+        'userAns':userAns,
     }
     return render(request,"profile.html",{'context':context})
 
@@ -518,11 +600,16 @@ def profileAlumni(request,id):
     usr = User.objects.filter(id = id).first()
     usrInfo = UserInfo.objects.filter(user = usr).first()
     skillsToPrint = [skill.skill.skill for skill in  userSkills.objects.filter(user = usr)]
+    userProfile=userprofile.objects.filter(author=usr).first()
+    userAns = Answers.objects.filter(author = usr)
+    print(userAns)
     print(skillsToPrint)
     context={
         'user':usr,
         'uInfo':usrInfo,
-        'skills':skillsToPrint
+        'skills':skillsToPrint,
+        'userProfile':userProfile,
+        'userAns':userAns,
     }
     return render(request,"profile.html",{'context':context})
 
@@ -539,33 +626,45 @@ class AjaxAnsView(View):
         alert = "Offensive or inappropriate language used...cant post"
         allGood = "1"
         # if request.GET.get("userPost") :
-        text = request.GET.get("userPost")
-        status = checkProfanity(text)
         if request.is_ajax():
-            print(request)
-            if(status == True):
-                return JsonResponse({"Cuss":alert},status=200)
-            elif(text == ""):
-                return JsonResponse({"Cuss":"Blank Question cant be posted"},status=200)
-            else:
-                try:
-                    usr = User.objects.filter(username = request.user).first()
-                    qtn = Questions.objects.filter(id = id).first()
-                    ans = Answers(answer = text,ansTo = qtn,author = usr)
-                    ans.save()
-                    return JsonResponse({"Cuss":allGood},status=200)
-                except:
-                    return JsonResponse({"Cuss":"couldnt upload"},status=200)
-        # elif request.GET.get("ansUp"):
-        #     id = request.GET.get("ansUp")
-        #     if request.is_ajax():
-        #         ans = Answers.objects.filter(id = id).first()
-        #         ans.upVotes += 1 
+            if request.GET.get("userPost"):
+                print("in post")
+                text = request.GET.get("userPost")
+                status = checkProfanity(text)
+                print(request)
+                if(status == True):
+                    return JsonResponse({"Cuss":alert},status=200)
+                elif(text == ""):
+                    return JsonResponse({"Cuss":"Blank Question cant be posted"},status=200)
+                else:
+                    try:
+                        usr = User.objects.filter(username = request.user).first()
+                        qtn = Questions.objects.filter(id = id).first()
+                        ans = Answers(answer = text,ansTo = qtn,author = usr)
+                        ans.save()
+                        return JsonResponse({"Cuss":allGood},status=200)
+                    except:
+                        return JsonResponse({"Cuss":"couldnt upload"},status=200)
+            elif request.GET.get("ansUp"):
+                print("in upvote")
+                vid = request.GET.get("ansUp")
+                # ans = Answers.objects.filter(id = vid).first()
+                # ans.upVotes += 1 
+                # ans.save()
+                computeScore("u",vid)
+            elif request.GET.get("ansDwn"):
+                print("in dwnvote")
+                vid = request.GET.get("ansDwn")
+                # ans = Answers.objects.filter(id = vid).first()
+                # ans.downVotes += 1
+                # ans.save()
+                computeScore("d",vid)
+
 
         
         getQ = Questions.objects.filter(id=id)
         ansList=[ans.answer for ans in Answers.objects.filter(ansTo=getQ[0])]
-        ansObj = [ans for ans in Answers.objects.filter(ansTo=getQ[0])]
+        ansObj = [ans for ans in Answers.objects.filter(ansTo=getQ[0]).order_by('-score')]
         # print(ansObj)
         commentList = [comment for ans in ansObj for comment in Comments.objects.filter(commentToAnswer = ans)]
         # print(commentList)
@@ -597,6 +696,15 @@ def postQuestion(request):
             usr = User.objects.filter(username = request.user).first()
             qtn = Questions(question = text, userWhoAsked = usr)
             qtn.save()
+            
+            releventSkills=test(text)
+
+            skillSet = [item.id for skill in releventSkills for item in Skills.objects.filter(skill = skill)]
+            alumniUsrObj = set([user.user for skill in skillSet for user in  userSkills.objects.filter(skill = skill)])
+
+            for ppl in alumniUsrObj:
+                nfy = Notifications(question = text,whoAsked = request.user, user = ppl, qID = qtn.id)
+                nfy.save()
             return JsonResponse({"status":200})
         except:
             return JsonResponse({"status":500})
@@ -649,6 +757,7 @@ def save_comment(request,id):
             'comments':commentList
         }
         return render(request,'comments.html',{'context':context})
+   
 
 
 class AjaxComView(View):
@@ -670,14 +779,15 @@ class AjaxComView(View):
                 elif(text == ""):
                     return JsonResponse({"Cuss":"Blank Question cant be posted"},status=200)
                 else:
-                    try:
-                        usr = User.objects.filter(username = request.user).first()
-                        ans = Answers.objects.filter(id = id).first()
-                        com = Comments(comment = text, commentToAnswer = ans, posSentiment = sentiment, author = usr)
-                        com.save()
-                        return JsonResponse({"Cuss":allGood},status=200)
-                    except:
-                        return JsonResponse({"Cuss":"couldnt upload"},status=200)
+                    # try:
+                    usr = User.objects.filter(username = request.user).first()
+                    ans = Answers.objects.filter(id = id).first()
+                    com = Comments(comment = text, commentToAnswer = ans, posSentiment = sentiment, author = usr)
+                    com.save()
+                    computeScore("comment",com.id)
+                    return JsonResponse({"Cuss":allGood},status=200)
+                    # except:
+                    #     return JsonResponse({"Cuss":"couldnt upload"},status=200)
                                         
         elif request.GET.get("isReply"):
             print("reply")
@@ -760,22 +870,44 @@ def runCheck(request):
             return render(request,"register3.html",{"err":"Uploaded document does not appear to be SFIT Marksheet"})
 
 
+@csrf_exempt
+def skillPage(request):
+    if request.method =="POST":
+        if request.POST.get('skillslist',False):
+            xskill = request.session['saved']
+            xskill.append(request.POST["skillslist"])
+            request.session['saved'] = xskill
+            print(xskill)
+
+        else:
+            usr=User.objects.filter(id=request.session['regUser']).first()
+            CurrComp = request.POST.get("CurrComp")
+            year_of_passing = request.POST.get("YoG")
+            mcourse = request.POST.get("course")
+            uni = request.POST.get("university")
+
+            Info=userprofile(author=usr,yofp=year_of_passing,mcourse=mcourse,muniersity=uni,company=CurrComp)
+            Info.save()
+
+            xskill=request.session['saved']
+            allskills=[item for x in xskill for item in Skills.objects.filter(skill = x)]
+            print(allskills)
+            for i in allskills:
+                usk=userSkills(user=usr,skill=i)
+                usk.save()
+            
+       
+    return render(request,"register3.html")
 
 def autocomplete(request):
-    #s=request.GET.get()
-    qs=Skills.objects.all()
-    return render (request,'register2.html',{"autocomplete":qs})
-    #if 'term' in request.GET:
-     #   qs=Skills.objects.filter(skill_istartswith=request.GET.get('term'))
-      #  skills1 = list()
-        #for skillfor in qs:
-       #     skills1.append(skillfor.skill)
-        # titles = [product.title for product in qs]
-        #return JsonResponse(skills1, safe=False)
-    #return render(request, 'register2.html')
-    # ans = execute()
-    # print(ans)
-    # return HttpResponse("DOne")
+    skill= request.GET.get("skill")
+    payload=[]
+
+    if skill:
+        qs=Skills.objects.filter(skill__icontains=skill)
+        for ski in qs:
+            payload.append(ski.skill)
+    return JsonResponse({'status':200, 'data':payload})
 
 
 ############################################

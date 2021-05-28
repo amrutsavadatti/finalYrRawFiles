@@ -1,55 +1,58 @@
-{% extends 'boilerPlate.html' %}
+{% extends 'base.html' %}
 {% block cssStatic %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="stylesheet" href="{% static 'alumniCSS.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  	<script>
+		$(document).ready(function(){
+		$("#ifNotCuss").hide()
+		$(".reply-click").on('click',function(){
+                var aID = $(this).data('answer');
+				console.log(aID);
+				$("#sendToProfanityCheck").on('click',function(){
+					$.ajax({
+						url: "askAlumni",
+						type: "POST",
+						data: {
+							'userPost' : $("#myText").val(),
+							'alumniID' : aID
+						},
+						success: function(response){
+							if (response.Cuss != "1"){
+								$("#ifCuss").text(response.Cuss)
+							}
+							else{
+								$("#ifNotCuss").show();
+								$("#ifCuss").hide();
+								
+
+							}
+						}
+
+					});
+
+				});
+			
+			});
+		});
+	</script>
 {% endblock cssStatic %}
 
-{% block boilerBody %}
+{% block body %}
 
 
-<nav class="navbar navbar-dark bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="postAlumni">Ask-it</a>
-              <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Hi {{dynamicUserName}} <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item ">
-              <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
-            </li>
-          </ul>
-          <a class="nav-link" style="color:white" href="#">Log Out</a>
-        </div>
-<form method="POST" action="/postAlumni">
-{% csrf_token %}
-<div class="input-group my-2 mr-5">
-      <input type="text" class="form-control" name="searchInput" placeholder="put query or errorcode" aria-label="Recipient's username" aria-describedby="button-addon2">
-      <div class="input-group-append">
-      <button class="btn btn-outline-success" type="button" id="button-addon2">Search</button>
-      <p>{{abc}}</p>
-  </div>  
-
-
-</div>
-</form>
-    {% comment %} <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> {% endcomment %}
-    <ul class="navbar-nav px-3">
-      <li class="nav-item text-nowrap">
-        <a class="nav-link" href="#">Log out</a>
-      </li>
-    </ul>
-  </nav>
-
-
-<div class="container-fluid">
+<div class="container-fluid mt-5">
     <div class="row" >
         <div class="col pt-2 ">
             <div class="main" style="background-color: white;">
+            <form method="POST" action="/alumni">
+                {% csrf_token %}
                 <div class="input-group mb-0 px-3 py-3 sticky-top" style="background-color: rgb(61, 104, 121); border-radius: 5px;">
-                    <input type="text" class="form-control" placeholder="Alumni's username or Skill" aria-label="Recipient's username" aria-describedby="button-addon2">
-                    <button class="btn btn-success" type="button" id="button-addon2">Search</button>
+                    <input name="skillSearchInput" type="text" class="form-control" placeholder="Alumni's username or Skill" aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <button class="btn btn-success" type="submit" id="button-addon2">Search</button>
                 </div>
+             </form>
 
                   <div class="card-body pt-0">
                     <table class="table table-striped" style="width:100%">
@@ -59,45 +62,54 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Action</th>
-                                <th>Status</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
-                        {% for i,j,k in info %}
+                            {% for i,j,k,l in info %}
                             <tr>
                                 <td><img src="https://bootdey.com/img/Content/avatar/avatar{{j}}.png" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-                                <td><a href="profile"> {{i}} </a></td>
+                                <td>
+                                    <a href="/profile/{{l}}">
+                                        {{i}}
+                                    </a>
+                                </td>
                                 <td>{{k}}</td>
                                 <td>
                                     <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                                    <button data-answer="{{l}}" type="button" class="btn btn-primary reply-click" data-toggle="modal" data-target="#askQ">
                                     Message
                                     </button>
 
                                     <!-- Modal -->
-                                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalCenterTitle">Ask</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                            </button>
+
+                                    <div class="modal fade" id="askQ" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalCenterTitle">Ask</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                
+                                                <div class="modal-body">
+                                                    <textarea id="myText" class="form-control" aria-label="With textarea" placeholder="Put Your Questions here"></textarea>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <p id="ifCuss" style="color:red"></p>
+                                                    <p id="ifNotCuss" style="color:green">Question Posted</p>
+                                                    <button id="sendToProfanityCheck" type="button" class="btn btn-primary">Post</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="modal-body">
-                                            <textarea class="form-control" aria-label="With textarea" placeholder="Put Your Questions here"></textarea>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-primary">Send</button>
-                                        </div>
-                                        </div>
-                                    </div>
                                     </div>
                                 </td>
                                 
-                                <td><span class="badge bg-success">Active</span></td>
+                                {% comment %} <td><span class="badge bg-success">Active</span></td> {% endcomment %}
                             </tr>
-                        {% endfor %}
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -109,4 +121,4 @@
 
 
 
-{% endblock boilerBody %}
+{% endblock body %}

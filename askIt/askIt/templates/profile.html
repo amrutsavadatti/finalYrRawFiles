@@ -58,18 +58,26 @@
                     </p>
                     <p class="clearfix">
                       <span class="float-left">
-                        Phone
+                        Works at
                       </span>
                       <span class="float-right text-muted">
-                        {{context.uInfo.phoneNo}}
+                        {{context.userProfile.company}}
                       </span>
                     </p>
                     <p class="clearfix">
                       <span class="float-left">
-                        Mail
+                        Masters Course
                       </span>
                       <span class="float-right text-muted">
-                        {{context.user.email}}
+                        {{context.userProfile.mcourse}}
+                      </span>
+                    </p>
+                    <p class="clearfix">
+                      <span class="float-left">
+                        University
+                      </span>
+                      <span class="float-right text-muted">
+                        {{context.userProfile.muniersity}}
                       </span>
                     </p>
                   </div>
@@ -127,8 +135,7 @@
                       <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="profile" class="img-sm rounded-circle">
                       <div class="ml-4">
                         <h6>
-                          Willie Stanley
-                          <small class="ml-4 text-muted"><i class="mdi mdi-clock mr-1"></i>10 hours</small>
+                          {{context.userAns.asnTo}}
                         </h6>
                         <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="sample" class="rounded mw-100">                            
                         <p class="small text-muted mt-2 mb-0">

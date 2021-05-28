@@ -6,129 +6,223 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function(){
-            $("#ifNotCuss").hide()
-            $("#sendToProfanityCheck").click(function(){
-                output = "";
+            $("#ifNotCussR").hide();
+            $("#ifCussR").hide();
+            $("#ifNotCuss").hide();
+            $("#ifCuss").hide();
+            $(".get-modal").click(function(){
+                $("#ifNotCussR").hide();
+                $("#ifCussR").hide();
+                $("#ifNotCuss").hide();
+                $("#ifCuss").hide();
 
-                $.ajax({
-                    url: $(location).attr("href"),
-                    type: "POST",
-                    data: {
-                        userPost : $("#myText").val(),
-                        
-                    },
-                    success: function(response){
-                        x = response.context.comments
-                        console.log(response.context.comments)
-                        $("#myText").text("");
-
-                        for(i=0; i<x.length; i++){
-                            output+= '<div class="border border-info rounded m-1 p-2 "> <p>' +
-                            x[i].comment +
-                            '</p> <p style="font-size:12px">' + 
-                            x[i].datetime+ 
-                            '</p> <p style="font-size:12px">'+ 
-                            x[i].author+
-                            '</p> </div>'
+            });
+            $("#sendToProfanityCheck").on('click',function(){
+                    $.ajax({
+                        url: $(location).attr("href"),
+                        type: "get",
+                        data: {
+                            userPost : $("#myText").val()
+                        },
+                        success: function(response){
+                            console.log(response.Cuss);
+                            if (response.Cuss != "1"){
+                                $("#ifCuss").text(response.Cuss)
+                                $("#ifCuss").show();
+                            }
+                            else{
+                                $("#ifNotCuss").show();
+                                $("#ifCuss").hide();
+                            }
                         }
-                        $("#getCom").html(output);
-                        
-                    }
+
+                    });
+
+                });
+
+            $(".reply-click").on('click',function(){
+                var commentid = $(this).data('answer');
+                console.log(commentid);
+                $("#sendToProfanityCheckR").click(function(){
+                    $.ajax({
+                        url: $(location).attr("href"),
+                        type: "get",
+                        data: {
+                            userPost : $("#myTextR").val(),
+                            isReply : commentid
+                        },
+                        success: function(response){
+                            if (response.Cuss != "1"){
+                                $("#ifCussR").text(response.Cuss)
+                            }
+                            else{
+                                $("#ifNotCussR").show();
+                                $("#ifCussR").hide();
+                                
+
+                            }
+                        }
+
+                    });
 
                 });
             });
+        
         });
     </script>
 {% endblock cssStatic %}
 
 {% block post1 %}
     <div class="col pt-2 mt-5" >
-            <div class="main shadow pb-2" style="background-color:white">
 
-                <ul class="nav nav-tabs" >
-                <li class="nav-item">
-                    <a class="nav-link" href="/postAlumni" style="color:#007bff">Alumni</a>
-                </li>
-                <li class="nav-item ">
-                    <a class="nav-link " href="/postStack" style="color:#007bff">StackOverflow</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link " href="/askAlumni" style="color:#007bff">Ask Alumni</a>
-                </li>                          
-                </ul>
+                    <div class="main shadow pb-2" style="background-color:white">
+
+                        <ul class="nav nav-tabs" >
+                        <li class="nav-item">
+                            <a class="nav-link" href="/postAlumni" style="color:#007bff">Alumni</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link " href="/postStack" style="color:#007bff">StackOverflow</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="/askAlumni" style="color:#007bff">Ask Alumni</a>
+                        </li>                          
+                        </ul>
 
 
-                {% comment %} this is blogPost  {% endcomment %}
+                        {% comment %} this is blogPost  {% endcomment %}
 
-                <div class="border  rounded m-1 p-2 " style="background-color:rgb(61, 104, 121)">
-                    <h3 style="color:white">{{context.ans}}</h3>
-                    <p style="font-size:12px;color:white">12/3/2021</p>
-                    <p style="font-size:12px;color:white">by person</p>
+                        <div class="border  rounded m-1 p-2 " style="background-color:rgb(61, 104, 121)">
+                            <h3 style="color:white">{{context.ans.answer}}</h3>
+                            <p style="font-size:12px;color:white">{{context.ans.datetime}}</p>
+                            <p style="font-size:12px;color:white">{{context.ans.author}}</p>
+                            <!-- Button trigger modal -->
+                            <a href="#" class="list-group-item list-group-item-action get-modal" data-toggle="modal" data-target="#postComment">
+                                <footer class="p-1" style="text-align:center">
+                                    <b>Post Comment</b>
+                                </footer>
+                            </a>
+                            
+                            <!-- Modal -->
+                            <div class="modal fade" id="postComment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalCenterTitle">Comment</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    
+                                        <div class="modal-body">
+                                            <textarea id="myText" class="form-control" aria-label="With textarea" placeholder="Post your comment"></textarea>
+                                        </div>
 
-                    <!-- Button trigger modal -->
-                    <a class="list-group-item list-group-item-action" data-toggle="modal" data-target="#postAns">
-                        <footer class="p-1" style="text-align:center">
-                            <b>Post Comment</b>
-                        </footer>
-                    </a>
+                                        <div class="modal-footer">
+                                            <p id="ifCuss" style="color:red"></p>
+                                            <p id="ifNotCuss" style="color:green">Comment Posted</p>
+                                            <button id="sendToProfanityCheck" type="button" class="btn btn-primary">Post</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>      
 
-                    <!-- Modal -->
-                    <div class="modal fade" id="postAns" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        {% for j in context.comments %}
+                        <div class="border border-info rounded m-1 p-2 ">
+                            {% if j.replyTo %}
+                                <div class="rounded m-1 p-2 " style="background-color:#d4d6d5">
+                                    {{j.replyTo}}
+                                </div>
+                                <p>
+                                    {{j.comment}}
+                                </p>
+                            {% else %}
+                                <p>
+                                    {{j.comment}}
+                                </p>
+                            {% endif %}
+                            
+                            <p style="font-size:12px">{{j.datetime}}</p>
+                            <p style="font-size:12px">{{j.author}}</p>
+                            <div class="row mx-1">
+                                <div class="col-md-auto" style="background-color:white">
+                                <img src="{% static 'upvote.png' %}">
+                                <p style="font-size:12px;padding-left:35%">{{j.upVotes}}</p>
+                                </div>
+                                <div class="col-md-auto" style="background-color:white">
+                                <img src="{% static 'downvote.png' %}">
+                                <p style="font-size:12px;padding-left:35%">{{j.downVotes}}</p>
+                                </div>
+                                <div class="col-md-auto" style="background-color:white">
+
+                                <!-- Button trigger modal -->
+                                    <a class=" reply-click " data-answer="{{j.comment}}" data-toggle="modal" data-target="#replyModal{{j.id}}"  aria-expanded="false" aria-controls="collapseExample">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" class="feather feather-reply-fill iconClass" viewBox="0 0 16 16">
+                                        <path d="M5.921 11.9 1.353 8.62a.719.719 0 0 1 0-1.238L5.921 4.1A.716.716 0 0 1 7 4.719V6c1.5 0 6 0 7 8-2.5-4.5-7-4-7-4v1.281c0 .56-.606.898-1.079.62z"/>
+                                        </svg>
+                                        <p style="font-size:12px;padding-left:35%">{{i}}</p>  
+                                    </a>
+
+                                <!-- Modal -->
+                                    <div  class="modal fade" id="replyModal{{j.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalCenterTitle">Reply</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                            
+                                                <div class="modal-body">
+                                                    <textarea id="myTextR" class="form-control" aria-label="With textarea" placeholder="Write your reply here"></textarea>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <p id="ifCussR" style="color:red"></p>
+                                                    <p id="ifNotCussR" style="color:green">Reply Posted</p>
+                                                    <button id="sendToProfanityCheckR" type="button" class="btn btn-primary">Post</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>                                
+                                </div>                                
+                            </div>
+                            
+                        </div>                        
+                        {% endfor %}
+                        
+                        {% comment %} modal body {% endcomment %}
+                        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalCenterTitle">Write your Answer</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            
-                                <div class="modal-body">
-                                    <textarea id="myText" class="form-control" aria-label="With textarea" placeholder="Post your Answer"></textarea>
-                                </div>
-
-                                <div class="modal-footer">
-                                    <p id="ifCuss" style="color:red"></p>
-                                    <p id="ifNotCuss" style="color:green">Question Posted</p>
-                                    <button id="sendToProfanityCheck" type="button" class="btn btn-primary">Post</button>
-                                </div>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalCenterTitle">Reply to</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="border rounded m-1 p-2 " style="background-color:#c9d6d6">
+                                    <p>
+                                        comment comment comment
+                                    </p>
+                                </div> 
+                                <br>
+                                <textarea id="myText" class="form-control" aria-label="With textarea" placeholder="Write Reply"></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success">Reply</button>
+                            </div>
                             </div>
                         </div>
-                    </div> 
-                </div>      
-                <div id="getCom">
-                    {% for j in context.comments %}
+                        </div>                        
+
                     
-                    <div class="border border-info rounded m-1 p-2 ">
-
-                        <p>
-                            {{j.comment}}
-                        </p>
-                        <p style="font-size:12px">{{j.datetime}}</p>
-                        <p style="font-size:12px">{{j.author}}</p>
-                        <div class="row mx-1">
-                            <div class="col-md-auto" style="background-color:white">
-                            <img src="{% static 'upvote.png' %}">
-                            <p style="font-size:12px;padding-left:35%">{{j.upVotes}}</p>
-                            </div>
-                            <div class="col-md-auto" style="background-color:white">
-                            <img src="{% static 'downvote.png' %}">
-                            <p style="font-size:12px;padding-left:35%">{{j.downVotes}}</p>
-                            </div>
-                                <div class="col-md-auto" style="background-color:white">
-                                <a href="/comments/{{j.id}}" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                    <img src="{% static 'comment.png' %}">
-                                </a>                                
-                            </div>                                
-                        </div>
-                    </div>                        
-                    {% endfor %}
-                </div>
-                                  
-            {% comment %} end main {% endcomment %}
-        </div> 
-        
-    </div>
-    
+                    {% comment %} end main {% endcomment %}
+                </div> 
+                
+            </div>
 
 {% endblock post1 %}

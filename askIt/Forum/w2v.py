@@ -3,7 +3,7 @@ import os
 
 dir = os.getcwd() + "word2vec_skill.bin"
 #loading the model
-model = gensim.models.Word2Vec.load("C:/Users/Chelamallu/Desktop/askIt2021/finalYrRawFiles/askIt/Forum/word2vec_skill.bin")
+model = gensim.models.Word2Vec.load("C:/Users/rjaco/OneDrive/Desktop/BE project/finalYrRawFiles/askIt/Forum/word2vec_skill.bin")
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize 
 import nltk

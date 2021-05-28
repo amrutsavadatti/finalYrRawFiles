@@ -24,7 +24,7 @@ def execute(image):
     CATEGORIES = ["handwritten", "marksheets"]
 
     #loading the CNN model
-    model = tf.keras.models.load_model("C:/Users/Chelamallu/Desktop/askIt2021/finalYrRawFiles/askIt/Forum/model.h5")
+    model = tf.keras.models.load_model("C:/Users/rjaco/OneDrive/Desktop/BE project/finalYrRawFiles/askIt/Forum/model.h5")
 
     #Allowed file extensions: .pdf,.jpg,.png,.jpeg,.bmp,.gif,.tif,.tiff,.webp
     #defining the path to the image

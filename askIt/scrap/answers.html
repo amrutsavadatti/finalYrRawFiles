@@ -40,26 +40,23 @@
                         ansUp : answerid
                     },
                     success: function(response){
-                        console.log("upvoted");
+                        if (response.Cuss != "1"){
+                            $("#ifCuss").text(response.Cuss)
+                        }
+                        else{
+                            $("#ifNotCuss").show();
+                            $("#ifCuss").hide();
+                            
+
+                        }
                     }
 
                 });
         });
 
-        $(".downvote-click").on('click',function(){
+        $(".upvote-click").on('click',function(){
             var answerid = $(this).data('answer');
             console.log(answerid);
-            $.ajax({
-                    url: $(location).attr("href"),
-                    type: "get",
-                    data: {
-                        ansDwn : answerid
-                    },
-                    success: function(response){
-                        console.log("Dwnvoted");
-                    }
-
-                });
         });
         
         });

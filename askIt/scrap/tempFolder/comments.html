@@ -1,0 +1,134 @@
+{% extends 'home.html' %}
+
+{% block cssStatic %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+$(document).ready(function(){
+    $("#ifNotCussR").hide();
+    $("#ifCussR").hide();
+    $("#ifNotCuss").hide();
+    $("#ifCuss").hide();
+    $(".get-modal").click(function(){
+        $("#ifNotCussR").hide();
+        $("#ifCussR").hide();
+        $("#ifNotCuss").hide();
+        $("#ifCuss").hide();
+
+    });
+    $("#sendToProfanityCheck").on('click',function(){
+            $.ajax({
+                url: $(location).attr("href"),
+                type: "get",
+                data: {
+                    userPost : $("#myText").val()
+                },
+                success: function(response){
+                    console.log(response.Cuss);
+                    if (response.Cuss != "1"){
+                        $("#ifCuss").text(response.Cuss)
+                        $("#ifCuss").show();
+                    }
+                    else{
+                        $("#ifNotCuss").show();
+                        $("#ifCuss").hide();
+                    }
+                }
+
+            });
+
+        });
+
+    $(".reply-click").on('click',function(){
+        var commentid = $(this).data('answer');
+        console.log(commentid);
+        $("#sendToProfanityCheckR").click(function(){
+            $.ajax({
+                url: $(location).attr("href"),
+                type: "get",
+                data: {
+                    userPost : $("#myTextR").val(),
+                    isReply : commentid
+                },
+                success: function(response){
+                    if (response.Cuss != "1"){
+                        $("#ifCussR").text(response.Cuss)
+                    }
+                    else{
+                        $("#ifNotCussR").show();
+                        $("#ifCussR").hide();
+                        
+
+                    }
+                }
+
+            });
+
+        });
+    });
+
+});
+
+
+    </script>
+{% endblock cssStatic %}
+
+{% block post1 %}
+    <div class="col pt-2 mt-5" >
+
+        <div class="main shadow pb-2" style="background-color:white">
+
+            <ul class="nav nav-tabs" >
+            <li class="nav-item">
+                <a class="nav-link" href="/postAlumni" style="color:#007bff">Alumni</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link " href="/postStack" style="color:#007bff">Google</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="/askAlumni" style="color:#007bff">Ask Alumni</a>
+            </li>                          
+            </ul>
+
+            {% comment %} this is blogPost  {% endcomment %}
+
+            <div class="border  rounded m-1 p-2 " style="background-color:rgb(61, 104, 121)">
+                <h3 style="color:white">{{context.ans.answer}}</h3>
+                <p style="font-size:12px;color:white">{{context.ans.datetime}}</p>
+                <p style="font-size:12px;color:white">{{context.ans.author}}</p>
+                <!-- Button trigger modal -->
+                <a href="#" class="list-group-item list-group-item-action get-modal" data-toggle="modal" data-target="#postComment">
+                    <footer class="p-1" style="text-align:center">
+                        <b>Post Comment</b>
+                    </footer>
+                </a>
+                <!-- Modal -->
+                <div class="modal fade" id="postComment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalCenterTitle">Comment</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        
+                            <div class="modal-body">
+                                <textarea id="myText" class="form-control" aria-label="With textarea" placeholder="Post your comment"></textarea>
+                            </div>
+
+                            <div class="modal-footer">
+                                <p id="ifCuss" style="color:red"></p>
+                                <p id="ifNotCuss" style="color:green">Comment Posted</p>
+                                <button id="sendToProfanityCheck" type="button" class="btn btn-primary">Post</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+{% endblock post1 %}

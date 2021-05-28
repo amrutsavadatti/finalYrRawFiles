@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path("", views.display, name = "displayPage"),
-    #path("login", login_attempt, name = "Login"),
+    path('searchSkill/', views.autocomplete, name='autocomplete'),
     path("register1", views.Register1, name = "Register1"),
     path("register2", views.Register2, name = "Register2"),
     #path('ajax/register4/', views.autocomplete, name='autocomplete'),
@@ -40,6 +40,7 @@ urlpatterns = [
     path("notifications", notify, name = "notify"),
     path("s", getSkills, name = "gs"),
     path("getIn", getIn, name = "getIn"),
+    path("reg2",skillPage,name="skillPage"),
 
 ]
 
