@@ -583,8 +583,13 @@ def profile(request):
     usrInfo = UserInfo.objects.filter(user = usr).first()
     skillsToPrint = [skill.skill.skill for skill in  userSkills.objects.filter(user = usr)]
     userProfile=userprofile.objects.filter(author=usr).first()
-    userAns = Answers.objects.filter(author = usr)
-    print(userAns)
+    userAns = [x for x in Answers.objects.filter(author=usr)]
+    num = len(userAns)
+    upvotes = downVotes = 0
+    for i in range(num):
+        upvotes+=userAns[i].upVotes
+        downVotes+=userAns[i].downVotes
+    avatar = random.randint(1,3)
     print(skillsToPrint)
     context={
         'user':usr,
@@ -592,7 +597,12 @@ def profile(request):
         'skills':skillsToPrint,
         'userProfile':userProfile,
         'userAns':userAns,
+        'upVotes':upvotes,
+        'downVotes':downVotes,
+        'qAnswered':num,
+        'avatar':avatar
     }
+    
     return render(request,"profile.html",{'context':context})
 
 @login_required
@@ -601,8 +611,13 @@ def profileAlumni(request,id):
     usrInfo = UserInfo.objects.filter(user = usr).first()
     skillsToPrint = [skill.skill.skill for skill in  userSkills.objects.filter(user = usr)]
     userProfile=userprofile.objects.filter(author=usr).first()
-    userAns = Answers.objects.filter(author = usr)
-    print(userAns)
+    userAns = [x for x in Answers.objects.filter(author=usr)]
+    num = len(userAns)
+    upvotes = downVotes = 0
+    for i in range(num):
+        upvotes+=userAns[i].upVotes
+        downVotes+=userAns[i].downVotes
+    avatar = random.randint(1,3)
     print(skillsToPrint)
     context={
         'user':usr,
@@ -610,7 +625,12 @@ def profileAlumni(request,id):
         'skills':skillsToPrint,
         'userProfile':userProfile,
         'userAns':userAns,
+        'upVotes':upvotes,
+        'downVotes':downVotes,
+        'qAnswered':num,
+        'avatar' : avatar,
     }
+    
     return render(request,"profile.html",{'context':context})
 
 
@@ -701,6 +721,7 @@ def postQuestion(request):
 
             skillSet = [item.id for skill in releventSkills for item in Skills.objects.filter(skill = skill)]
             alumniUsrObj = set([user.user for skill in skillSet for user in  userSkills.objects.filter(skill = skill)])
+            # print(usr.last_login())
 
             for ppl in alumniUsrObj:
                 nfy = Notifications(question = text,whoAsked = request.user, user = ppl, qID = qtn.id)
