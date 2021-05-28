@@ -258,6 +258,7 @@ def login_attempt(request):
         password = encrypt(request.POST.get("pass"))
         print(username,password)
         user_obj = User.objects.filter(username = username).first()
+        print(user_obj)
         if user_obj is None:
             messages.success(request, 'User not found.')
             return redirect('/accounts/login')
@@ -493,6 +494,8 @@ def send_mail_after_registration(email , token):
 def token_send(request):
     return render(request , 'registerToken.html')
     
+def takeToReg(request):
+    return render(request , 'choice.html')
 
 def Register2(request):
     if request.method == "POST":
@@ -502,7 +505,8 @@ def Register2(request):
         lName = request.POST.get("lName")
         userName = request.POST.get("userName")
         phoneNumber = request.POST.get("phoneNumber")
-        userType = request.POST.get("uType")
+        userType = request.session["utype"]
+        print(userType)
 
         try:
             if User.objects.filter(username = userName).first():
@@ -530,7 +534,7 @@ def Register2(request):
 
         except Exception as e:
             print(e)
-
+    
     return render(request,"register2.html")
 
 def verify(request , auth_token):
@@ -544,7 +548,10 @@ def verify(request , auth_token):
             profile_obj.is_verified = True
             profile_obj.save()
             messages.success(request, 'Your account has been verified.')
-            return redirect('/register2')
+            if request.session["utype"] == "alumni":
+                return redirect('/register2')
+            else:
+                return redirect('/accounts/login')
         else:
             return redirect('/error')
     except Exception as e:
@@ -580,6 +587,7 @@ def home1(request):
 @login_required
 def profile(request):
     usr = User.objects.filter(username = request.user).first()
+    print(usr)
     usrInfo = UserInfo.objects.filter(user = usr).first()
     skillsToPrint = [skill.skill.skill for skill in  userSkills.objects.filter(user = usr)]
     userProfile=userprofile.objects.filter(author=usr).first()
@@ -851,11 +859,22 @@ def LogOut(request):
     logout(request)
     return render(request,'index.html')
 
+@csrf_exempt
+def medium(request,id):
+    if id==1:
+        request.session["utype"]="alumni"
+    else:
+        request.session["utype"]="student"
+    context={
+        'type':request.session["utype"]
+    }
+    return render(request,"register1.html",{"context":context})
+
+
 def runCheck(request):
     uploaded_file = 0
-    if request.method == "POST":
-
-        base_dir = "C:/Users/Chelamallu/Desktop/askIt2021/finalYrRawFiles/askIt/askIt/media"
+    if request.method == "POST" and request.FILES['document']:
+        base_dir = "C:/Users/rjaco/OneDrive/Desktop/BE project/finalYrRawFiles/askIt/askIt/media"
         for f in os.listdir(base_dir):
             os.remove(os.path.join(base_dir, f))
 
@@ -865,7 +884,7 @@ def runCheck(request):
     else:
         return render(request,"register3.html")
     if(uploaded_file != 0):
-        base_dir = "C:/Users/Chelamallu/Desktop/askIt2021/finalYrRawFiles/askIt/askIt/media"
+        base_dir = "C:/Users/rjaco/OneDrive/Desktop/BE project/finalYrRawFiles/askIt/askIt/media"
         fileList = os.listdir(base_dir)
         print(fileList)
         image = os.path.join(base_dir,fileList[0])
@@ -884,7 +903,7 @@ def runCheck(request):
                     userCheck.save()
                     print(userCheck.markSheet_verified)
 
-            return render(request,"postAlumni.html",{"ans":"You Are All Set To Go !!"})
+            return render(request,"login.html",{"ans":"You Are All Set To Go !!"})
         elif ans == "-1":
             return render(request,"register3.html",{"err":"Make sure image is readable"})
         else:
@@ -916,9 +935,8 @@ def skillPage(request):
             for i in allskills:
                 usk=userSkills(user=usr,skill=i)
                 usk.save()
-            
        
-    return render(request,"register3.html")
+    return render(request,"infoPage.html")
 
 def autocomplete(request):
     skill= request.GET.get("skill")

@@ -41,6 +41,8 @@ urlpatterns = [
     path("s", getSkills, name = "gs"),
     path("getIn", getIn, name = "getIn"),
     path("reg2",skillPage,name="skillPage"),
+    path("reg1/<int:id>",medium,name="medium"),
+    path("signin",takeToReg,name="takeToReg"),
 
 ]
 

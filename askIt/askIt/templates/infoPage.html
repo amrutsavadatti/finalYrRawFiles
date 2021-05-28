@@ -1,0 +1,31 @@
+{% extends 'boilerplate.html' %}
+{% block cssStatic %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'register.css' %}">
+{% endblock cssStatic %}
+{% block boilerBody %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="#">Ask-it</a>
+</nav>
+
+<div class="container ">
+  <div class="title">Documents Information</div>
+  <br>
+    <p>On the next page make sure to uplaod a clear copy of your institute marksheet in PNG, JPEG, JPG format.</p>
+    <p>We do not store your documents and is only used for validation<p>
+    
+        <div class="float-right shadow p-2" style="background-color:#fcba03;border-radius:25px;">
+            <a href="/register3">
+                <b>Next<b>
+            </a>
+            
+        </div>  
+       
+  </div>
+</div>
+{% endblock boilerBody %}
+
+  

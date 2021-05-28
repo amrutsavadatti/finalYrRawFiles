@@ -39,35 +39,6 @@
                     });
 
                 });
-
-            $(".reply-click").on('click',function(){
-                var commentid = $(this).data('answer');
-                console.log(commentid);
-                $("#sendToProfanityCheckR").click(function(){
-                    $.ajax({
-                        url: $(location).attr("href"),
-                        type: "get",
-                        data: {
-                            userPost : $("#myTextR").val(),
-                            isReply : commentid
-                        },
-                        success: function(response){
-                            if (response.Cuss != "1"){
-                                $("#ifCussR").text(response.Cuss)
-                            }
-                            else{
-                                $("#ifNotCussR").show();
-                                $("#ifCussR").hide();
-                                
-
-                            }
-                        }
-
-                    });
-
-                });
-            });
-        
         });
     </script>
 {% endblock cssStatic %}
@@ -82,7 +53,7 @@
                             <a class="nav-link" href="/postAlumni" style="color:#007bff">Alumni</a>
                         </li>
                         <li class="nav-item ">
-                            <a class="nav-link " href="/postStack" style="color:#007bff">StackOverflow</a>
+                            <a class="nav-link " href="/postStack" style="color:#007bff">Google</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link " href="/askAlumni" style="color:#007bff">Ask Alumni</a>
@@ -154,39 +125,7 @@
                                 <img src="{% static 'downvote.png' %}">
                                 <p style="font-size:12px;padding-left:35%">{{j.downVotes}}</p>
                                 </div>
-                                <div class="col-md-auto" style="background-color:white">
-
-                                <!-- Button trigger modal -->
-                                    <a class=" reply-click " data-answer="{{j.comment}}" data-toggle="modal" data-target="#replyModal{{j.id}}"  aria-expanded="false" aria-controls="collapseExample">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" class="feather feather-reply-fill iconClass" viewBox="0 0 16 16">
-                                        <path d="M5.921 11.9 1.353 8.62a.719.719 0 0 1 0-1.238L5.921 4.1A.716.716 0 0 1 7 4.719V6c1.5 0 6 0 7 8-2.5-4.5-7-4-7-4v1.281c0 .56-.606.898-1.079.62z"/>
-                                        </svg>
-                                        <p style="font-size:12px;padding-left:35%">{{i}}</p>  
-                                    </a>
-
-                                <!-- Modal -->
-                                    <div  class="modal fade" id="replyModal{{j.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalCenterTitle">Reply</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                            
-                                                <div class="modal-body">
-                                                    <textarea id="myTextR" class="form-control" aria-label="With textarea" placeholder="Write your reply here"></textarea>
-                                                </div>
-
-                                                <div class="modal-footer">
-                                                    <p id="ifCussR" style="color:red"></p>
-                                                    <p id="ifNotCussR" style="color:green">Reply Posted</p>
-                                                    <button id="sendToProfanityCheckR" type="button" class="btn btn-primary">Post</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>                                
+                                <div class="col-md-auto" style="background-color:white">                               
                                 </div>                                
                             </div>
                             
